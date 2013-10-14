@@ -6,8 +6,17 @@
 
 	<!-- Definitions of classpath variants used for different tasks -->
 
-	<path id="classpath">
+	<path id="compile.classpath">
 		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<path id="run.classpath">
+		<pathelement location="${build.classes.dir}"/>
+		<pathelement location="${build.dir}/img"/>
+		<pathelement location="${build.dir}"/>
+		<fileset dir="${build.dir}/lib">
 			<include name="*.jar"/>
 		</fileset>
 	</path>
@@ -31,25 +40,25 @@
 			target="1.7"
 			source="1.7"
 			includeantruntime="false">
-			<classpath refid="classpath"/>
+			<classpath refid="compile.classpath"/>
 		</javac>
 	</target>
 	
 	<target name="build" depends="compile" description="Build project">
 		<copy todir="${build.dir}">
-			<fileset dir="${basedir}/etc/img"/>
 			<fileset dir="${basedir}" includes="*.properties"/>
+		</copy>
+		<copy todir="${build.dir}/img">
+			<fileset dir="${basedir}/etc/img"/>			
+		</copy>
+		<copy todir="${build.dir}/lib">
+			<fileset dir="${lib.dir}" includes="*.jar*"/>
 		</copy>
 	</target>
 	
 
 	<target name="run" depends="build" description="Execute application">
-		<java classname="ee.ut.math.tvt.kvaliteetsedideed.Intro" fork="yes" >
-		<classpath>
-		           <pathelement path="${build.dir}"/>
-			<pathelement path="${build.classes.dir}"/>
-		</classpath>
-			</java>
+		<java classname="ee.ut.math.tvt.kvaliteetsedideed.Intro" fork="yes" classpathref="run.classpath"/>
 	</target>
 
 	<target name="dist" depends="increase-version" description="Create jar">
@@ -61,6 +70,5 @@
 	
 	<target name="increase-version" description="Increase version number in version.porperties">
 	</target>
-
 </project>
 
