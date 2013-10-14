@@ -15,6 +15,7 @@
 	<path id="run.classpath">
 		<pathelement location="${build.classes.dir}"/>
 		<pathelement location="${build.dir}/img"/>
+		<pathelement location="${build.dir}/conf"/>
 		<pathelement location="${build.dir}"/>
 		<fileset dir="${build.dir}/lib">
 			<include name="*.jar"/>
@@ -52,7 +53,10 @@
 			<fileset dir="${basedir}/etc/img"/>			
 		</copy>
 		<copy todir="${build.dir}/lib">
-			<fileset dir="${lib.dir}" includes="*.jar*"/>
+			<fileset dir="${lib.dir}" includes="*.jar"/>
+		</copy>
+		<copy todir="${build.dir}/conf">
+			<fileset dir="${basedir}/etc" includes="log4j.xml"/>
 		</copy>
 	</target>
 	
