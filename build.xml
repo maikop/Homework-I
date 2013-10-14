@@ -53,6 +53,7 @@
 	</target>
 
 	<target name="dist" depends="increase-version" description="Create jar">
+		  <jar destfile="${dist}/build/Kvaliteetsed-Ideed.jar" basedir="${build}/classes"/>
 	</target>
 
 	<target name="jrun" description="Execute jar">
