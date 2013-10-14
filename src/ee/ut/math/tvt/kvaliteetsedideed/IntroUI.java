@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import org.apache.log4j.Logger;
 
 public class IntroUI extends JFrame {
   private static final long serialVersionUID = 1L;
@@ -34,6 +35,7 @@ public class IntroUI extends JFrame {
   }
 
   private void addLogo() {
+    Logger logger = Logger.getLogger(IntroUI.class);
     try {
       File file = new File(logoPath);
       System.out.println(file.getAbsolutePath());
