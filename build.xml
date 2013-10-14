@@ -6,10 +6,7 @@
 
 	<!-- Definitions of classpath variants used for different tasks -->
 
-	<path id="compile.classpath">
-		<pathelement location="${build.classes.dir}"/>
-		<!-- configuration -->
-		<pathelement location="${conf.dir}"/>
+	<path id="classpath">
 		<fileset dir="lib">
 			<include name="*.jar"/>
 		</fileset>
@@ -22,25 +19,37 @@
 		<delete dir="${build.dir}"/>
 	</target>
 
-	<target name="build" description="Build project">
-		<mkdir dir="${build.dir}"/>
+	<target name="compile" description="Compiles the source files">
 		<mkdir dir="${build.classes.dir}"/>
 		<javac
 			srcdir="${src.dir}"
-		    destdir="${build.classes.dir}"
-		    debug="true"
-		    debuglevel="lines,vars,source"
-		    encoding="utf-8"
-		    compiler="modern"
-		    target="1.7"
-		    source="1.7"
+			destdir="${build.classes.dir}"
+			debug="true"
+			debuglevel="lines,vars,source"
+			encoding="utf-8"
+			compiler="modern"
+			target="1.7"
+			source="1.7"
 			includeantruntime="false">
-			<classpath refid="compile.classpath"/>
+			<classpath refid="classpath"/>
 		</javac>
 	</target>
+	
+	<target name="build" depends="compile" description="Build project">
+		<copy todir="${build.dir}">
+			<fileset dir="${basedir}/etc/img"/>
+			<fileset dir="${basedir}" includes="*.properties"/>
+		</copy>
+	</target>
+	
 
 	<target name="run" depends="build" description="Execute application">
-		<java classname="ee.ut.math.tvt.salessystem.SalesSystem" classpathref="test.classpath" fork="yes" />
+		<java classname="ee.ut.math.tvt.kvaliteetsedideed.Intro" fork="yes" >
+		<classpath>
+		           <pathelement path="${build.dir}"/>
+			<pathelement path="${build.classes.dir}"/>
+		</classpath>
+			</java>
 	</target>
 
 	<target name="dist" depends="increase-version" description="Create jar">
