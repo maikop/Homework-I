@@ -59,6 +59,12 @@
 	</target>
 	
 	<target name="increase-version" description="Increase version number in version.porperties">
+		
+		<propertyfile>
+		<property name="version" location="POS"/>
+
+
+		</propertyfile>
 	</target>
 
 </project>
