@@ -19,7 +19,9 @@ public class IntroUI extends JFrame {
   private static final Logger LOGGER = Logger.getLogger(IntroUI.class);
 
   private final String logoPath = "logo.jpg";
+  private final String teamName = "Kvaliteetsed ideed";
   private final String teamLeader = "Mikk Maasik";
+  private final String teamLeaderEmail = "maasik2@gmail.com";
   private final String[] teamMembers = new String[] { "Maiko Plinte", "Aleksei Panarin", "Lembit Gerz" };
   private int currentRow = 0;
 
@@ -27,12 +29,16 @@ public class IntroUI extends JFrame {
 
   public IntroUI() {
     setLayout(new GridBagLayout());
+    setTitle("Kvaliteetsed ideed");
     c.anchor = GridBagConstraints.NORTHWEST;
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     addLogo();
+    addTeamNameLabel();
     addTeamLeaderLabel();
     addTeamMemberLabels();
     addVersionNumber();
+    pack();
     LOGGER.info("Intro UI successfully started!");
   }
 
@@ -41,18 +47,25 @@ public class IntroUI extends JFrame {
     try {
       File file = new File(logoPath);
       System.out.println(file.getAbsolutePath());
-      JLabel logo = new JLabel(new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("logo.jpg"))));
+      JLabel logo = new JLabel(new ImageIcon(ImageIO.read(ClassLoader.getSystemResource(logoPath))));
       logo.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
       add(logo, getC(0, currentRow++, 2, 1));
     } catch (IOException e) {
-      // TODO LOG4J WARNING
-      e.printStackTrace();
+      LOGGER.warn("Error loading resource " + logoPath);
     }
+  }
+
+  private void addTeamNameLabel() {
+    add(new JLabel("Team name: "), getC(0, currentRow));
+    add(new JLabel(teamName), getC(1, currentRow++));
   }
 
   private void addTeamLeaderLabel() {
     add(new JLabel("Team leader: "), getC(0, currentRow));
     add(new JLabel(teamLeader), getC(1, currentRow++));
+
+    add(new JLabel("Team leader email: "), getC(0, currentRow));
+    add(new JLabel(teamLeaderEmail), getC(1, currentRow++));
   }
 
   private void addTeamMemberLabels() {
@@ -64,7 +77,7 @@ public class IntroUI extends JFrame {
 
   private void addVersionNumber() {
     Properties versionProperties = getVersionProperties();
-    add(new JLabel("Versioon: "), getC(0, currentRow));
+    add(new JLabel("Version: "), getC(0, currentRow));
     add(new JLabel(versionProperties.getProperty("build.number")), getC(1, currentRow++));
   }
 
@@ -75,7 +88,7 @@ public class IntroUI extends JFrame {
       properties.load(inPropertiesInputStream);
       inPropertiesInputStream.close();
     } catch (IOException ex) {
-      // TODO log4j logging
+      LOGGER.warn("Error loading resource 'version.properties'!");
     }
     return properties;
   }
