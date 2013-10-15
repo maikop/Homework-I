@@ -12,9 +12,11 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import org.apache.log4j.Logger;
 
 public class IntroUI extends JFrame {
   private static final long serialVersionUID = 1L;
+  private static final Logger LOGGER = Logger.getLogger(IntroUI.class);
 
   private final String logoPath = "logo.jpg";
   private final String teamLeader = "Mikk Maasik";
@@ -31,9 +33,11 @@ public class IntroUI extends JFrame {
     addTeamLeaderLabel();
     addTeamMemberLabels();
     addVersionNumber();
+    LOGGER.info("Intro UI successfully started!");
   }
 
   private void addLogo() {
+    Logger logger = Logger.getLogger(IntroUI.class);
     try {
       File file = new File(logoPath);
       System.out.println(file.getAbsolutePath());
