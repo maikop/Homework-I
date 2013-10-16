@@ -67,6 +67,11 @@
 
 	<target name="dist" depends="build, increase-version" description="Create jar">
 		<mkdir dir="${build.dir}/jar"/>  
+		<!--<mkdir dir="${build.dir}/jar/etc"/>-->
+		<mkdir dir="${build.dir}/jar/etc/img"/>  
+		<copy todir="${build.dir}/jar/etc/img">
+					<fileset dir="${basedir}/etc/img"/>	
+				</copy>
 		<jar destfile="${build.dir}/jar/Kvaliteetsed-Ideed.jar" >
 			 <fileset dir="${build.dir}/classes" />
 			 <fileset dir="${build.dir}" excludes="classes/**, lib/" />
