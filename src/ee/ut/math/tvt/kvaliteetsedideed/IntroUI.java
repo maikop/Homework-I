@@ -3,7 +3,6 @@ package ee.ut.math.tvt.kvaliteetsedideed;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -42,8 +41,6 @@ public class IntroUI extends JFrame {
   }
 
   private void addLogo() {
-    Logger logger = Logger.getLogger(IntroUI.class);
-    File file = new File(logoPath);
     JLabel logo = new JLabel(new ImageIcon("build/etc/img/logo.jpg"));
     logo.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
     add(logo, getC(0, currentRow++, 2, 1));
