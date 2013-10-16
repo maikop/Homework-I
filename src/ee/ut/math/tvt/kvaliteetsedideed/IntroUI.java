@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -18,7 +17,7 @@ public class IntroUI extends JFrame {
   private static final long serialVersionUID = 1L;
   private static final Logger LOGGER = Logger.getLogger(IntroUI.class);
 
-  private final String logoPath = "logo.jpg";
+  private final String logoPath = "etc/img/logo.jpg";
   private final String teamName = "Kvaliteetsed ideed";
   private final String teamLeader = "Mikk Maasik";
   private final String teamLeaderEmail = "maasik2@gmail.com";
@@ -44,15 +43,10 @@ public class IntroUI extends JFrame {
 
   private void addLogo() {
     Logger logger = Logger.getLogger(IntroUI.class);
-    try {
-      File file = new File(logoPath);
-      System.out.println(file.getAbsolutePath());
-      JLabel logo = new JLabel(new ImageIcon(ImageIO.read(ClassLoader.getSystemResource(logoPath))));
-      logo.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
-      add(logo, getC(0, currentRow++, 2, 1));
-    } catch (IOException e) {
-      LOGGER.warn("Error loading resource " + logoPath);
-    }
+    File file = new File(logoPath);
+    JLabel logo = new JLabel(new ImageIcon("build/etc/img/logo.jpg"));
+    logo.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
+    add(logo, getC(0, currentRow++, 2, 1));
   }
 
   private void addTeamNameLabel() {

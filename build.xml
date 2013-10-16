@@ -14,7 +14,7 @@
 	
 	<path id="run.classpath">
 		<pathelement location="${build.classes.dir}"/>
-		<pathelement location="${build.dir}/img"/>
+		<pathelement location="${build.dir}/etc/img"/>
 		<pathelement location="${build.dir}/conf"/>
 		<pathelement location="${build.dir}"/>
 		<fileset dir="${build.dir}/lib">
@@ -45,11 +45,11 @@
 		</javac>
 	</target>
 	
-	<target name="build" depends="compile" description="Build project">
+	<target name="build" depends="clean, compile" description="Build project">
 		<copy todir="${build.dir}">
 			<fileset dir="${basedir}" includes="*.properties"/>
 		</copy>
-		<copy todir="${build.dir}/img">
+		<copy todir="${build.dir}/etc/img">
 			<fileset dir="${basedir}/etc/img"/>			
 		</copy>
 		<copy todir="${build.dir}/lib">
@@ -65,16 +65,37 @@
 		<java classname="ee.ut.math.tvt.kvaliteetsedideed.Intro" fork="yes" classpathref="run.classpath"/>
 	</target>
 
-	<target name="dist" depends="increase-version" description="Create jar">
+	<target name="dist" depends="build, increase-version" description="Create jar">
+		<mkdir dir="${build.dir}/jar"/>  
+		<jar destfile="${build.dir}/jar/Kvaliteetsed-Ideed.jar" >
+			 <fileset dir="${build.dir}/classes" />
+			 <fileset dir="${build.dir}" excludes="classes/**, lib/" />
+			 <!--<zipfileset  includes="**/*.class" src="lib/log4j-1.2.17.jar"/>-->
+			<restrict>
+			     <name name="**/*.class"/>
+			     <archives>
+			       <zips>
+			         <fileset dir="lib/" includes="**/*.jar"/>
+			       </zips>
+			     </archives>
+			</restrict>
+				<manifest>
+			           <attribute name="Main-Class" value="ee.ut.math.tvt.kvaliteetsedideed.Intro"/>  	
+				</manifest>
+		</jar>
 	</target>
+	
 
 	<target name="jrun" description="Execute jar">
+		<java jar="build/jar/Kvaliteetsed-Ideed.jar" fork="true"/>
 	</target>
 	
 	<target name="increase-version" description="Increase version number in version.porperties">
-		<property file="version.properties"/>
 		<propertyfile file="version.properties">
 			<entry key="build.revision.number" type="int" operation="+" default="1" />
+		</propertyfile>		
+		<property file="version.properties"/>
+		<propertyfile file="version.properties">
 			<entry key="build.number"  value="${build.major.number}.${build.minor.number}.${build.revision.number}"/>
 		</propertyfile>
 	</target>
