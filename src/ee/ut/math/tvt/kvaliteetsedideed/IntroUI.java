@@ -16,7 +16,7 @@ public class IntroUI extends JFrame {
   private static final long serialVersionUID = 1L;
   private static final Logger LOGGER = Logger.getLogger(IntroUI.class);
 
-  private final String logoPath = "etc/img/logo.jpg";
+  private final String logoName = "logo.jpg";
   private final String teamName = "Kvaliteetsed ideed";
   private final String teamLeader = "Mikk Maasik";
   private final String teamLeaderEmail = "maasik2@gmail.com";
@@ -37,13 +37,17 @@ public class IntroUI extends JFrame {
     addTeamMemberLabels();
     addVersionNumber();
     pack();
-    LOGGER.info("Intro UI successfully started!");
+    LOGGER.info("Intro UI started");
   }
 
   private void addLogo() {
-    JLabel logo = new JLabel(new ImageIcon("etc/img/logo.jpg"));
-    logo.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
-    add(logo, getC(0, currentRow++, 2, 1));
+    try {
+      JLabel logo = new JLabel(new ImageIcon(ClassLoader.getSystemResource(logoName)));
+      logo.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
+      add(logo, getC(0, currentRow++, 2, 1));
+    } catch (Exception e) {
+      LOGGER.warn("Error loading resource " + logoName);
+    }
   }
 
   private void addTeamNameLabel() {
@@ -79,7 +83,7 @@ public class IntroUI extends JFrame {
       properties.load(inPropertiesInputStream);
       inPropertiesInputStream.close();
     } catch (IOException ex) {
-      LOGGER.warn("Error loading resource 'version.properties'!");
+      LOGGER.warn("Error loading resource 'version.properties'");
     }
     return properties;
   }
