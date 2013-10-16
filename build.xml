@@ -72,10 +72,10 @@
 	</target>
 	
 	<target name="increase-version" description="Increase version number in version.porperties">
+		<property file="version.properties"/>
 		<propertyfile file="version.properties">
-		<entry key="build.revision.number" type="int" 
-		     operation="+" 
-		     default="1" />
+			<entry key="build.revision.number" type="int" operation="+" default="1" />
+			<entry key="build.number"  value="${build.major.number}.${build.minor.number}.${build.revision.number}"/>
 		</propertyfile>
 	</target>
 </project>
