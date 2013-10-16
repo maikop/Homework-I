@@ -44,7 +44,7 @@ public class IntroUI extends JFrame {
   private void addLogo() {
     Logger logger = Logger.getLogger(IntroUI.class);
     File file = new File(logoPath);
-    JLabel logo = new JLabel(new ImageIcon("etc/img/logo.jpg"));
+    JLabel logo = new JLabel(new ImageIcon("build/etc/img/logo.jpg"));
     logo.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
     add(logo, getC(0, currentRow++, 2, 1));
   }
