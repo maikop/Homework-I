@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -36,16 +35,11 @@ public class IntroUI extends JFrame {
 
   private void addLogo() {
     Logger logger = Logger.getLogger(IntroUI.class);
-    try {
-      File file = new File(logoPath);
-      System.out.println(file.getAbsolutePath());
-      JLabel logo = new JLabel(new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("logo.jpg"))));
-      logo.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
-      add(logo, getC(0, currentRow++, 2, 1));
-    } catch (IOException e) {
-      // TODO LOG4J WARNING
-      e.printStackTrace();
-    }
+    File file = new File(logoPath);
+    System.out.println(file.getAbsolutePath());
+    JLabel logo = new JLabel(new ImageIcon(("etc/img/logo.jpg")));
+    logo.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
+    add(logo, getC(0, currentRow++, 2, 1));
   }
 
   private void addTeamLeaderLabel() {
