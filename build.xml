@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." name="POS" default="build">
 
-	<property file="application.properties"/>
+	<property name="build.dir" value="${basedir}/build"/>
+	<property name="build.classes.dir" value="${build.dir}/classes"/>
+	<property name="dist.dir" value="${build.dir}/jar"/>
+	<property name="src.dir" value="${basedir}/src"/>
+	<property name="lib.dir" value="${basedir}/lib"/>
+	<property name="img.dir" value="${basedir}/img"/>
+	<property name="conf.dir" value="${basedir}/conf"/>
 
 	<path id="compile.classpath">
 		<fileset dir="lib">
@@ -44,13 +50,13 @@
 			<fileset dir="${basedir}" includes="*.properties"/>
 		</copy>
 		<copy todir="${build.dir}/img">
-			<fileset dir="${basedir}/img"/>			
+			<fileset dir="${img.dir}"/>			
 		</copy>
 		<copy todir="${build.dir}/lib">
 			<fileset dir="${lib.dir}" includes="*.jar"/>
 		</copy>
 		<copy todir="${build.dir}/conf">
-			<fileset dir="${basedir}/conf"/>
+			<fileset dir="${conf.dir}"/>
 		</copy>
 	</target>
 	
@@ -84,7 +90,6 @@
 		</jar>
 	</target>
 	
-
 	<target name="jrun" description="Execute jar">
 		<java jar="build/jar/Kvaliteetsed-Ideed.jar" fork="true"/>
 	</target>
@@ -98,5 +103,21 @@
 			<entry key="build.number"  value="${build.major.number}.${build.minor.number}.${build.revision.number}"/>
 		</propertyfile>
 	</target>
+	
+	<target name="git_commit" description="git add -A, git commit, git push">
+		<input message="Commit comment" addproperty="comment" />
+		<exec executable="git" dir=".">
+			<arg value="add"/>
+			<arg value="-A"/>
+		</exec>
+		<exec executable="git" dir=".">
+			<arg value="commit"/>
+			<arg value="-m ${comment}"/>
+		</exec>
+		<exec executable="git" dir=".">
+			<arg value="push"/>
+		</exec>
+	</target>
+	
 </project>
 
