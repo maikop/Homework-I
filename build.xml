@@ -107,6 +107,7 @@
 		</propertyfile>
 	</target>
 
+	
 	<target name="git_commit" description="git add -A, git commit, git push">
 		<input message="Commit comment" addproperty="comment" />
 		<exec executable="git" dir=".">
