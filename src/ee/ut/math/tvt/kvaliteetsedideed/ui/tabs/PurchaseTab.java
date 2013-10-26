@@ -130,6 +130,7 @@ public class PurchaseTab {
     log.info("New sale process started");
     try {
       domainController.startNewPurchase();
+      model.getCurrentPurchaseTableModel().clear();
       startNewSale();
     } catch (VerificationFailedException e1) {
       log.error(e1.getMessage());
@@ -154,6 +155,8 @@ public class PurchaseTab {
     try {
       log.debug("Contents of the current basket:\n" + model.getCurrentPurchaseTableModel());
       domainController.submitCurrentPurchase(model.getCurrentPurchaseTableModel().getTableRows());
+      model.getPurchaseHistoryTableModel().populateWithData(domainController.loadPurchaseHistory());
+      model.getPurchaseHistoryTableModel().fireTableDataChanged();
       endSale();
       model.getCurrentPurchaseTableModel().clear();
     } catch (VerificationFailedException e1) {
