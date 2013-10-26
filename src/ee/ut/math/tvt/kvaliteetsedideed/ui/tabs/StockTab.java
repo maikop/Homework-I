@@ -1,10 +1,13 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.tabs;
 
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.model.SalesSystemModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -57,7 +60,7 @@ public class StockTab {
     gc.anchor = GridBagConstraints.NORTHWEST;
     gc.weightx = 0;
 
-    addItem = new JButton("Add");
+    addItem = createAddButton();
     gc.gridwidth = GridBagConstraints.RELATIVE;
     gc.weightx = 1.0;
     panel.add(addItem, gc);
@@ -66,7 +69,43 @@ public class StockTab {
     return panel;
   }
 
-  // table of the wareshouse stock
+  // Creates the button "Add"
+  private JButton createAddButton() {
+    JButton b = new JButton("Add");
+    b.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        addButtonClicked();
+      }
+    });
+    return b;
+  }
+
+  /** Event handler for the <code>add</code> event. */
+  protected void addButtonClicked() {
+    try {
+      addNewItem();
+    } catch (Exception e1) {
+      System.err.print(e1.getMessage());
+    }
+  }
+
+  // ITEM ADDING FUNCTIONALITY HERE:
+  private void addNewItem() {
+
+    StockItem newItem = new StockItem();
+
+    newItem.setName("New Item");
+
+    // get id of item in last row (largest id)
+    int nrRows = model.getWarehouseTableModel().getRowCount();
+    Object newId = model.getWarehouseTableModel().getValueAt(nrRows - 1, 0);
+
+    newItem.setId(((long) newId) + 1);
+    model.getWarehouseTableModel().addItem(newItem);
+
+  }
+
+  // table of the warehouse stock
   private Component drawStockMainPane() {
     JPanel panel = new JPanel();
 
