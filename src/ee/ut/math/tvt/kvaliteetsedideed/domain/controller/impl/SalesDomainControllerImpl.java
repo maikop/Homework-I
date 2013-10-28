@@ -1,6 +1,7 @@
 package ee.ut.math.tvt.kvaliteetsedideed.domain.controller.impl;
 
 import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.SoldItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
@@ -12,12 +13,21 @@ import java.util.List;
  */
 public class SalesDomainControllerImpl implements SalesDomainController {
 
+  private List<PurchaseItem> purchaseItems = new ArrayList<PurchaseItem>();
+
   public void submitCurrentPurchase(List<SoldItem> goods) throws VerificationFailedException {
+
+    PurchaseItem purchaseItem = new PurchaseItem();
+    purchaseItem.setSoldItems(goods);
+    purchaseItem.confirmPurchase();
+    purchaseItems.add(purchaseItem);
+
     // Let's assume we have checked and found out that the buyer is underaged
     // and
     // cannot buy chupa-chups
-    throw new VerificationFailedException("Underaged!");
+    // throw new VerificationFailedException("Underaged!");
     // XXX - Save purchase
+
   }
 
   public void cancelCurrentPurchase() throws VerificationFailedException {
@@ -44,4 +54,10 @@ public class SalesDomainControllerImpl implements SalesDomainController {
 
     return dataset;
   }
+
+  @Override
+  public List<PurchaseItem> loadPurchaseHistory() {
+    return purchaseItems;
+  }
+
 }
