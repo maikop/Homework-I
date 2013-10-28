@@ -115,14 +115,14 @@ public class PurchaseItemPanel extends JPanel {
       chooseProduct.addItem(si.getName());
     }
 
-    // chooseProduct.addFocusListener(new FocusListener() {
-    // public void focusGained(FocusEvent e) {
-    // }
-    //
-    // public void focusLost(FocusEvent e) {
-    // fillDialogFields2();
-    // }
-    // });
+    chooseProduct.addFocusListener(new FocusListener() {
+      public void focusGained(FocusEvent e) {
+      }
+
+      public void focusLost(FocusEvent e) {
+        fillDialogFields2();
+      }
+    });
 
     panel.add(chooseProduct);
 
@@ -168,20 +168,21 @@ public class PurchaseItemPanel extends JPanel {
     }
   }
 
-  // public void fillDialogFields2() {
-  // Object stockItem = chooseProduct.getSelectedItem();
-  // StockItem stockItem = getItemById();
-  // if (stockItem != null) {
-  // nameField.setText(stockItem.getName());
-  // String priceString = String.valueOf(stockItem.getPrice());
-  // priceField.setText(priceString);
-  // } else {
-  // reset();
-  // }
-  // }
+  public void fillDialogFields2() {
+    StockItem stockItem = getStockItemFromComboBox();
+    if (stockItem != null) {
+      nameField.setText(stockItem.getName());
+      String priceString = String.valueOf(stockItem.getPrice());
+      priceField.setText(priceString);
+      String idString = String.valueOf(stockItem.getId());
+      barCodeField.setText(idString);
+    } else {
+      reset();
+    }
+  }
 
   // Search the warehouse for a StockItem with the bar code entered
-  // to the barCode textfield.
+  // to the barCode text field.
   private StockItem getStockItemByBarcode() {
     try {
       int code = Integer.parseInt(barCodeField.getText());
@@ -193,11 +194,12 @@ public class PurchaseItemPanel extends JPanel {
     }
   }
 
-  private StockItem getStockItemByProductName() {
+  // Search the warehouse for a StockItem with the item
+  // selected in the ComboBox
+  private StockItem getStockItemFromComboBox() {
     try {
-      String name = (String) (chooseProduct.getSelectedItem());
-
-      return model.getWarehouseTableModel().getItemById(1);
+      int code = (chooseProduct.getSelectedIndex() + 1);
+      return model.getWarehouseTableModel().getItemById(code);
     } catch (NumberFormatException ex) {
       return null;
     } catch (NoSuchElementException ex) {
