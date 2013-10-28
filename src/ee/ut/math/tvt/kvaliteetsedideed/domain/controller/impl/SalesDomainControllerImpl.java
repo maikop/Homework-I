@@ -6,6 +6,7 @@ import ee.ut.math.tvt.kvaliteetsedideed.domain.data.SoldItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,11 +16,17 @@ public class SalesDomainControllerImpl implements SalesDomainController {
 
   private List<PurchaseItem> purchaseItems = new ArrayList<PurchaseItem>();
 
-  public void submitCurrentPurchase(List<SoldItem> goods) throws VerificationFailedException {
-
+  @Override
+  public PurchaseItem createPurchaseItem(List<SoldItem> goods) {
     PurchaseItem purchaseItem = new PurchaseItem();
     purchaseItem.setSoldItems(goods);
-    purchaseItem.confirmPurchase();
+    purchaseItem.setPurchaseDate(new Date());
+    purchaseItem.calculateTotal();
+    return purchaseItem;
+  }
+
+  public void submitCurrentPurchase(PurchaseItem purchaseItem) throws VerificationFailedException {
+
     purchaseItems.add(purchaseItem);
 
     // Let's assume we have checked and found out that the buyer is underaged

@@ -1,5 +1,6 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.panels;
 
+import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.SoldItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.model.SalesSystemModel;
@@ -13,6 +14,7 @@ import java.awt.event.FocusListener;
 import java.util.NoSuchElementException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,13 +30,14 @@ public class PurchaseItemPanel extends JPanel {
   private static final long serialVersionUID = 1L;
 
   // Text field on the dialogPane
+
   private JTextField barCodeField;
   private JTextField quantityField;
   private JTextField nameField;
   private JTextField priceField;
-
+  private JComboBox<String> chooseProduct = new JComboBox<String>();
   private JButton addItemButton;
-
+  private SalesDomainController domainController;
   // Warehouse model
   private SalesSystemModel model;
 
@@ -44,7 +47,9 @@ public class PurchaseItemPanel extends JPanel {
    * @param model
    *          composite model of the warehouse and the shopping cart.
    */
-  public PurchaseItemPanel(SalesSystemModel model) {
+
+  public PurchaseItemPanel(SalesSystemModel model, SalesDomainController domainController) {
+    this.domainController = domainController;
     this.model = model;
 
     setLayout(new GridBagLayout());
@@ -78,7 +83,7 @@ public class PurchaseItemPanel extends JPanel {
 
     // Create the panel
     JPanel panel = new JPanel();
-    panel.setLayout(new GridLayout(5, 2));
+    panel.setLayout(new GridLayout(6, 2));
     panel.setBorder(BorderFactory.createTitledBorder("Product"));
 
     // Initialize the textfields
@@ -101,6 +106,25 @@ public class PurchaseItemPanel extends JPanel {
     priceField.setEditable(false);
 
     // == Add components to the panel
+
+    // - product
+    panel.add(new JLabel("Product:"));
+
+    // Create and add drop-down menu
+    for (StockItem si : domainController.loadWarehouseState()) {
+      chooseProduct.addItem(si.getName());
+    }
+
+    chooseProduct.addFocusListener(new FocusListener() {
+      public void focusGained(FocusEvent e) {
+      }
+
+      public void focusLost(FocusEvent e) {
+        fillDialogFields2();
+      }
+    });
+
+    panel.add(chooseProduct);
 
     // - bar code
     panel.add(new JLabel("Bar code:"));
@@ -144,11 +168,37 @@ public class PurchaseItemPanel extends JPanel {
     }
   }
 
+  public void fillDialogFields2() {
+    StockItem stockItem = getStockItemFromComboBox();
+    if (stockItem != null) {
+      nameField.setText(stockItem.getName());
+      String priceString = String.valueOf(stockItem.getPrice());
+      priceField.setText(priceString);
+      String idString = String.valueOf(stockItem.getId());
+      barCodeField.setText(idString);
+    } else {
+      reset();
+    }
+  }
+
   // Search the warehouse for a StockItem with the bar code entered
-  // to the barCode textfield.
+  // to the barCode text field.
   private StockItem getStockItemByBarcode() {
     try {
       int code = Integer.parseInt(barCodeField.getText());
+      return model.getWarehouseTableModel().getItemById(code);
+    } catch (NumberFormatException ex) {
+      return null;
+    } catch (NoSuchElementException ex) {
+      return null;
+    }
+  }
+
+  // Search the warehouse for a StockItem with the item
+  // selected in the ComboBox
+  private StockItem getStockItemFromComboBox() {
+    try {
+      int code = (chooseProduct.getSelectedIndex() + 1);
       return model.getWarehouseTableModel().getItemById(code);
     } catch (NumberFormatException ex) {
       return null;
@@ -182,6 +232,7 @@ public class PurchaseItemPanel extends JPanel {
     this.addItemButton.setEnabled(enabled);
     this.barCodeField.setEnabled(enabled);
     this.quantityField.setEnabled(enabled);
+    this.chooseProduct.setEnabled(enabled);
   }
 
   /**
