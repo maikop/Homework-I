@@ -107,7 +107,8 @@
 		</propertyfile>
 	</target>
 
-	
+	<!--Note: we did not use the method of passing credentials in the URL for pushing.
+	We used SSH keys: https://github.com/maikop/Kvaliteetsed-Ideed/wiki/Pushing-with-ANT-targets -->
 	<target name="git_commit" description="git add -A, git commit, git push">
 		<input message="Commit comment" addproperty="comment" />
 		<exec executable="git" >

@@ -25,8 +25,6 @@ public class SalesSystemUI extends JFrame {
 
   private static final Logger log = Logger.getLogger(SalesSystemUI.class);
 
-  private final SalesDomainController domainController;
-
   // Warehouse model
   private SalesSystemModel model;
 
@@ -42,12 +40,11 @@ public class SalesSystemUI extends JFrame {
    *          Sales domain controller.
    */
   public SalesSystemUI(SalesDomainController domainController) {
-    this.domainController = domainController;
     this.model = new SalesSystemModel(domainController);
 
     // Create singleton instances of the tab classes
     historyTab = new HistoryTab(model);
-    stockTab = new StockTab(model);
+    stockTab = new StockTab(domainController, model);
     purchaseTab = new PurchaseTab(domainController, model);
 
     setTitle("Sales system");

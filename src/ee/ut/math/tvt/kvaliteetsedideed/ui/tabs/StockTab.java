@@ -1,5 +1,6 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.tabs;
 
+import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.model.SalesSystemModel;
 import java.awt.Color;
@@ -8,6 +9,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -24,8 +26,10 @@ public class StockTab {
   private JButton addItem;
 
   private SalesSystemModel model;
+  private SalesDomainController domainController;
 
-  public StockTab(SalesSystemModel model) {
+  public StockTab(SalesDomainController domainController, SalesSystemModel model) {
+    this.domainController = domainController;
     this.model = model;
   }
 
@@ -93,7 +97,6 @@ public class StockTab {
     }
   }
 
-  // ITEM ADDING FUNCTIONALITY HERE:
   private void addNewItem() {
 
     StockItem newItem = new StockItem();
@@ -105,7 +108,10 @@ public class StockTab {
       Object newId = model.getWarehouseTableModel().getValueAt(nrRows - 1, 0);
 
       newItem.setId(((long) newId) + 1);
-      model.getWarehouseTableModel().addItem(newItem);
+      domainController.addStockItem(newItem);
+      model.getWarehouseTableModel().populateWithData(domainController.loadWarehouseState());
+      model.getWarehouseTableModel().fireTableDataChanged();
+      model.getStockComboBoxModel().addElement(newItem);
     }
 
   }
@@ -117,7 +123,7 @@ public class StockTab {
     JTextField price = new JTextField(3);
 
     JPanel panel = new JPanel();
-    panel.add(new JLabel("New Item name:"));
+    panel.add(new JLabel("Product name:"));
     panel.add(name);
     panel.add(Box.createVerticalStrut(15)); // a spacer
     panel.add(new JLabel("Quantity:"));
@@ -126,11 +132,14 @@ public class StockTab {
     panel.add(new JLabel("Price:"));
     panel.add(price);
 
-    int result = JOptionPane.showConfirmDialog(null, panel, "Fill in the new item data", JOptionPane.OK_CANCEL_OPTION);
+    int result = JOptionPane.showConfirmDialog(null, panel, "Adding new product", JOptionPane.OK_CANCEL_OPTION);
 
     if (result == JOptionPane.OK_OPTION) {
       item.setName(name.getText());
-      item.setPrice(Double.parseDouble(price.getText()));
+      Double inputPrice = Double.parseDouble(price.getText());
+      BigDecimal bd = new BigDecimal(inputPrice);
+      bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+      item.setPrice(bd.doubleValue());
       item.setQuantity(Integer.parseInt(quantity.getText()));
     }
   }

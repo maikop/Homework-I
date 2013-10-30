@@ -1,14 +1,15 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.model;
 
 import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
-import org.apache.log4j.Logger;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+
 
 /**
  * Main model. Holds all the other models.
  */
 public class SalesSystemModel {
-
-  private static final Logger log = Logger.getLogger(SalesSystemModel.class);
 
   // Warehouse model
   private StockTableModel warehouseTableModel;
@@ -18,8 +19,7 @@ public class SalesSystemModel {
 
   // Purchase history model
   private PurchaseHistoryTableModel purchaseHistoryTableModel;
-
-  private final SalesDomainController domainController;
+  private DefaultComboBoxModel<StockItem> stockComboBoxModel;
 
   /**
    * Construct application model.
@@ -28,8 +28,6 @@ public class SalesSystemModel {
    *          Sales domain controller.
    */
   public SalesSystemModel(SalesDomainController domainController) {
-    this.domainController = domainController;
-
     warehouseTableModel = new StockTableModel();
     currentPurchaseTableModel = new PurchaseInfoTableModel();
 
@@ -38,6 +36,12 @@ public class SalesSystemModel {
     // populate stock model with data from the warehouse
     warehouseTableModel.populateWithData(domainController.loadWarehouseState());
     purchaseHistoryTableModel.populateWithData(domainController.loadPurchaseHistory());
+    List<StockItem> stockItems = domainController.loadWarehouseState();
+    stockComboBoxModel = new DefaultComboBoxModel<StockItem>(stockItems.toArray(new StockItem[stockItems.size()]));
+  }
+
+  public DefaultComboBoxModel<StockItem> getStockComboBoxModel() {
+    return stockComboBoxModel;
   }
 
   public StockTableModel getWarehouseTableModel() {

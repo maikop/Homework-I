@@ -1,10 +1,10 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.panels;
 
-import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.SoldItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.model.SalesSystemModel;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -18,10 +18,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import org.apache.log4j.Logger;
 
 /**
@@ -38,9 +41,8 @@ public class PurchaseItemPanel extends JPanel {
   private JTextField quantityField;
   private JTextField nameField;
   private JTextField priceField;
-  private JComboBox<String> chooseProduct = new JComboBox<String>();
+  private JComboBox<StockItem> chooseProduct;
   private JButton addItemButton;
-  private SalesDomainController domainController;
 
   // Warehouse model
   private SalesSystemModel model;
@@ -52,8 +54,7 @@ public class PurchaseItemPanel extends JPanel {
    *          composite model of the warehouse and the shopping cart.
    */
 
-  public PurchaseItemPanel(SalesSystemModel model, SalesDomainController domainController) {
-    this.domainController = domainController;
+  public PurchaseItemPanel(SalesSystemModel model) {
     this.model = model;
 
     setLayout(new GridBagLayout());
@@ -83,6 +84,7 @@ public class PurchaseItemPanel extends JPanel {
   }
 
   // purchase dialog
+  @SuppressWarnings("unchecked")
   private JComponent drawDialogPane() {
 
     // Create the panel
@@ -114,10 +116,8 @@ public class PurchaseItemPanel extends JPanel {
     panel.add(new JLabel("Product:"));
 
     // Create and add drop-down menu
-    for (StockItem si : domainController.loadWarehouseState()) {
-      chooseProduct.addItem(si.getName());
-    }
-
+    chooseProduct = new JComboBox<StockItem>(model.getStockComboBoxModel());
+    chooseProduct.setRenderer(new ItemRenderer());
     // Fill the dialog fields if the choose product menu loses focus
 
     chooseProduct.addActionListener(new ActionListener() {
@@ -161,6 +161,17 @@ public class PurchaseItemPanel extends JPanel {
     return panel;
   }
 
+  @SuppressWarnings("serial")
+  private class ItemRenderer extends BasicComboBoxRenderer {
+    public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected,
+        boolean cellHasFocus) {
+      super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+      StockItem item = (StockItem) value;
+      setText(item.getName());
+      return this;
+    }
+  }
+
   // Fill dialog with data from the "database".
   public void fillDialogFields() {
     StockItem stockItem = getStockItemByBarcode();
@@ -169,7 +180,7 @@ public class PurchaseItemPanel extends JPanel {
       nameField.setText(stockItem.getName());
       String priceString = String.valueOf(stockItem.getPrice());
       priceField.setText(priceString);
-      chooseProduct.setSelectedItem(stockItem.getName());
+      chooseProduct.setSelectedItem(stockItem);
     } else {
       reset();
     }
@@ -220,10 +231,28 @@ public class PurchaseItemPanel extends JPanel {
    * @throws VerificationFailedException
    */
   public void addItemEventHandler() throws VerificationFailedException {
+
     // if customer wants to buy more products than are in stock, throw error
-    if (Integer.parseInt(quantityField.getText()) > model.getWarehouseTableModel().getItemById(Integer.parseInt(barCodeField.getText()))
-        .getQuantity()) {
-      throw new VerificationFailedException("Sorry! It looks like we don't have that many items in stock.");
+    Integer wantedQuantity;
+    try {
+      wantedQuantity = Integer.parseInt(quantityField.getText());
+    } catch (NumberFormatException e) {
+      wantedQuantity = 0;
+      log.warn("Invalid number entered for quantity!");
+    }
+    if (wantedQuantity == 0) {
+      return;
+    }
+
+    StockItem selectdItem = ((StockItem) model.getStockComboBoxModel().getSelectedItem());
+    Integer inCartQuantity = 0;
+    try {
+      SoldItem inCartItem = model.getCurrentPurchaseTableModel().getItemById(selectdItem.getId());
+      inCartQuantity = inCartItem.getQuantity();
+    } catch (NoSuchElementException e) {
+    }
+    if (inCartQuantity + wantedQuantity > selectdItem.getQuantity()) {
+      JOptionPane.showMessageDialog(this, "Your desired quantity exceeds the amount in stock!");
 
     } else {
       // add chosen item to the shopping cart.
