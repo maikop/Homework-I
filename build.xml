@@ -122,8 +122,24 @@
 			<arg value="push"/>
 		</exec>
 	</target>
+	
+			
+	<target name="git_tag" description="git tag">
+			<input message="Tag name" addproperty="name" defaultvalue="homework_"/>
+			<input message="Tag comment" addproperty="comment" defaultvalue="homework_" />
+			<exec executable="git" >
+				<arg value="tag"/>
+				<arg value="-a ${name}"/>
+				<arg value="-m ${comment}"/>
+				
+			</exec>
+			<exec executable="git" >
+				<input message="Tag name" addproperty="tags" />
+				<arg value="push"/>
+				<arg value= "--${tags}" />
+			</exec>
+		</target>
 
 	
 
 </project>
-

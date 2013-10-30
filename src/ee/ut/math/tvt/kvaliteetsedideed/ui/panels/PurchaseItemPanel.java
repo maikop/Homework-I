@@ -163,6 +163,7 @@ public class PurchaseItemPanel extends JPanel {
       nameField.setText(stockItem.getName());
       String priceString = String.valueOf(stockItem.getPrice());
       priceField.setText(priceString);
+      chooseProduct.setSelectedItem(stockItem.getName());
     } else {
       reset();
     }
