@@ -15,6 +15,21 @@ import java.util.List;
 public class SalesDomainControllerImpl implements SalesDomainController {
 
   private List<PurchaseItem> purchaseItems = new ArrayList<PurchaseItem>();
+  private List<StockItem> stockItems = new ArrayList<StockItem>();
+
+  public SalesDomainControllerImpl() {
+
+    StockItem chips = new StockItem(1l, "Lays chips", "Potato chips", 11.0, 5);
+    StockItem chupaChups = new StockItem(2l, "Chupa-chups", "Sweets", 8.0, 8);
+    StockItem frankfurters = new StockItem(3l, "Frankfurters", "Beer sauseges", 15.0, 12);
+    StockItem beer = new StockItem(4l, "Free Beer", "Student's delight", 0.0, 100);
+
+    stockItems.add(chips);
+    stockItems.add(chupaChups);
+    stockItems.add(frankfurters);
+    stockItems.add(beer);
+
+  }
 
   @Override
   public PurchaseItem createPurchaseItem(List<SoldItem> goods) {
@@ -25,8 +40,15 @@ public class SalesDomainControllerImpl implements SalesDomainController {
     return purchaseItem;
   }
 
-  public void submitCurrentPurchase(PurchaseItem purchaseItem) throws VerificationFailedException {
+  @Override
+  public void addStockItem(StockItem item) {
+    stockItems.add(item);
+  }
 
+  public void submitCurrentPurchase(PurchaseItem purchaseItem) throws VerificationFailedException {
+    for (SoldItem soldItem : purchaseItem.getSoldItems()) {
+      soldItem.getStockItem().decreaseStock(soldItem.getQuantity());
+    }
     purchaseItems.add(purchaseItem);
 
     // Let's assume we have checked and found out that the buyer is underaged
@@ -46,20 +68,7 @@ public class SalesDomainControllerImpl implements SalesDomainController {
   }
 
   public List<StockItem> loadWarehouseState() {
-    // XXX mock implementation
-    List<StockItem> dataset = new ArrayList<StockItem>();
-
-    StockItem chips = new StockItem(1l, "Lays chips", "Potato chips", 11.0, 5);
-    StockItem chupaChups = new StockItem(2l, "Chupa-chups", "Sweets", 8.0, 8);
-    StockItem frankfurters = new StockItem(3l, "Frankfurters", "Beer sauseges", 15.0, 12);
-    StockItem beer = new StockItem(4l, "Free Beer", "Student's delight", 0.0, 100);
-
-    dataset.add(chips);
-    dataset.add(chupaChups);
-    dataset.add(frankfurters);
-    dataset.add(beer);
-
-    return dataset;
+    return stockItems;
   }
 
   @Override

@@ -1,9 +1,11 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui;
 
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -11,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -23,8 +26,10 @@ public class PurchaseConfirmDialog extends JDialog {
   private JTextField returnAmountTextField;
   private JButton confirmButton;
 
-  public PurchaseConfirmDialog(PurchaseItem purchaseItem) {
+  public PurchaseConfirmDialog(PurchaseItem purchaseItem, Component parent) {
+    getRootPane().setBorder(new EmptyBorder(10, 10, 10, 10));
     setModal(true);
+    setLocationRelativeTo(parent);
     this.purchaseItem = purchaseItem;
     setLayout(new GridBagLayout());
     gc = new GridBagConstraints();
@@ -49,9 +54,11 @@ public class PurchaseConfirmDialog extends JDialog {
     gc.ipady = 5;
     gc.fill = GridBagConstraints.BOTH;
     gc.gridwidth = 1;
+    gc.insets = new Insets(0, 0, 10, 0);
     JLabel titleLabel = new JLabel("Confirm purchase");
     titleLabel.setFont(new Font("Sans Serif", Font.BOLD, 16));
     add(titleLabel, gc);
+    gc.insets = new Insets(0, 0, 0, 0);
   }
 
   private JLabel getBoldLabel(String content) {
