@@ -59,7 +59,7 @@ public class PurchaseTab {
     rootPanel.add(getPurchaseMenuPane(), getConstraintsForPurchaseMenu());
 
     // Add the main purchase-panel
-    purchasePane = new PurchaseItemPanel(model, domainController);
+    purchasePane = new PurchaseItemPanel(model);
     rootPanel.add(purchasePane, getConstraintsForPurchasePanel());
 
     return rootPanel;

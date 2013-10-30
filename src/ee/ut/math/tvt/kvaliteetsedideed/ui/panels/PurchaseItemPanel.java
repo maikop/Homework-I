@@ -1,6 +1,5 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.panels;
 
-import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.SoldItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
@@ -44,7 +43,6 @@ public class PurchaseItemPanel extends JPanel {
   private JTextField priceField;
   private JComboBox<StockItem> chooseProduct;
   private JButton addItemButton;
-  private SalesDomainController domainController;
 
   // Warehouse model
   private SalesSystemModel model;
@@ -56,8 +54,7 @@ public class PurchaseItemPanel extends JPanel {
    *          composite model of the warehouse and the shopping cart.
    */
 
-  public PurchaseItemPanel(SalesSystemModel model, SalesDomainController domainController) {
-    this.domainController = domainController;
+  public PurchaseItemPanel(SalesSystemModel model) {
     this.model = model;
 
     setLayout(new GridBagLayout());
@@ -87,6 +84,7 @@ public class PurchaseItemPanel extends JPanel {
   }
 
   // purchase dialog
+  @SuppressWarnings("unchecked")
   private JComponent drawDialogPane() {
 
     // Create the panel
@@ -163,8 +161,10 @@ public class PurchaseItemPanel extends JPanel {
     return panel;
   }
 
+  @SuppressWarnings("serial")
   private class ItemRenderer extends BasicComboBoxRenderer {
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected,
+        boolean cellHasFocus) {
       super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
       StockItem item = (StockItem) value;
       setText(item.getName());
@@ -180,7 +180,7 @@ public class PurchaseItemPanel extends JPanel {
       nameField.setText(stockItem.getName());
       String priceString = String.valueOf(stockItem.getPrice());
       priceField.setText(priceString);
-      chooseProduct.setSelectedItem(stockItem.getName());
+      chooseProduct.setSelectedItem(stockItem);
     } else {
       reset();
     }
