@@ -3,6 +3,7 @@ package ee.ut.math.tvt.kvaliteetsedideed.ui.panels;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.SoldItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.model.SalesSystemModel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import org.apache.log4j.Logger;
 
 /**
  * Purchase pane + shopping cart tabel UI.
@@ -28,6 +30,7 @@ import javax.swing.JTextField;
 public class PurchaseItemPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger log = Logger.getLogger(PurchaseItemPanel.class);
 
   // Text field on the dialogPane
 
@@ -38,6 +41,7 @@ public class PurchaseItemPanel extends JPanel {
   private JComboBox<String> chooseProduct = new JComboBox<String>();
   private JButton addItemButton;
   private SalesDomainController domainController;
+
   // Warehouse model
   private SalesSystemModel model;
 
@@ -144,7 +148,11 @@ public class PurchaseItemPanel extends JPanel {
     addItemButton = new JButton("Add to cart");
     addItemButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        addItemEventHandler();
+        try {
+          addItemEventHandler();
+        } catch (VerificationFailedException e1) {
+          log.error(e1.getMessage());
+        }
       }
     });
 
@@ -208,18 +216,27 @@ public class PurchaseItemPanel extends JPanel {
 
   /**
    * Add new item to the cart.
+   * 
+   * @throws VerificationFailedException
    */
-  public void addItemEventHandler() {
-    // add chosen item to the shopping cart.
-    StockItem stockItem = getStockItemByBarcode();
-    if (stockItem != null) {
-      int quantity;
-      try {
-        quantity = Integer.parseInt(quantityField.getText());
-      } catch (NumberFormatException ex) {
-        quantity = 1;
+  public void addItemEventHandler() throws VerificationFailedException {
+    // if customer wants to buy more products than are in stock, throw error
+    if (Integer.parseInt(quantityField.getText()) > model.getWarehouseTableModel().getItemById(Integer.parseInt(barCodeField.getText()))
+        .getQuantity()) {
+      throw new VerificationFailedException("Sorry! It looks like we don't have that many items in stock.");
+
+    } else {
+      // add chosen item to the shopping cart.
+      StockItem stockItem = getStockItemByBarcode();
+      if (stockItem != null) {
+        int quantity;
+        try {
+          quantity = Integer.parseInt(quantityField.getText());
+        } catch (NumberFormatException ex) {
+          quantity = 1;
+        }
+        model.getCurrentPurchaseTableModel().addItem(new SoldItem(stockItem, quantity));
       }
-      model.getCurrentPurchaseTableModel().addItem(new SoldItem(stockItem, quantity));
     }
   }
 

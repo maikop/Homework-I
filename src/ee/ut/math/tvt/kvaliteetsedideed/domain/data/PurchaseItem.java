@@ -43,7 +43,7 @@ public class PurchaseItem implements Cloneable, DisplayableItem {
   public void calculateTotal() {
     totalPrice = new Double(0);
     for (SoldItem item : soldItems) {
-      totalPrice += item.getSum();// +AMOUNT
+      totalPrice += item.getSum();
     }
   }
 
