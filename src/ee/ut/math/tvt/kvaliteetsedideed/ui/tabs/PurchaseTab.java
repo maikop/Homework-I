@@ -1,7 +1,9 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.tabs;
 
 import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
+import ee.ut.math.tvt.kvaliteetsedideed.ui.PurchaseConfirmDialog;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.model.SalesSystemModel;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.panels.PurchaseItemPanel;
 import java.awt.Color;
@@ -151,17 +153,22 @@ public class PurchaseTab {
 
   /** Event handler for the <code>submit purchase</code> event. */
   protected void submitPurchaseButtonClicked() {
-    log.info("Sale complete");
     try {
       log.debug("Contents of the current basket:\n" + model.getCurrentPurchaseTableModel());
-      domainController.submitCurrentPurchase(model.getCurrentPurchaseTableModel().getTableRows());
-      model.getPurchaseHistoryTableModel().populateWithData(domainController.loadPurchaseHistory());
-      model.getPurchaseHistoryTableModel().fireTableDataChanged();
-      endSale();
-      model.getCurrentPurchaseTableModel().clear();
+      PurchaseItem purchaseItem = domainController.createPurchaseItem(model.getCurrentPurchaseTableModel().getTableRows());
+      new PurchaseConfirmDialog(purchaseItem);
+      if (purchaseItem.isConfirmed()) {
+        domainController.submitCurrentPurchase(purchaseItem);
+        model.getPurchaseHistoryTableModel().populateWithData(domainController.loadPurchaseHistory());
+        model.getPurchaseHistoryTableModel().fireTableDataChanged();
+        endSale();
+        model.getCurrentPurchaseTableModel().clear();
+        log.info("Sale complete");
+      }
     } catch (VerificationFailedException e1) {
       log.error(e1.getMessage());
     }
+
   }
 
   /*

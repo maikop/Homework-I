@@ -1,6 +1,7 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui;
 
 import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.SoldItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
@@ -110,7 +111,8 @@ public class ConsoleUI {
         for (StockItem stockItem : cart) {
           soldItems.add(new SoldItem(stockItem, stockItem.getQuantity()));
         }
-        dc.submitCurrentPurchase(soldItems);
+        PurchaseItem purchaseItem = dc.createPurchaseItem(soldItems);
+        dc.submitCurrentPurchase(purchaseItem);
         cart.clear();
       } catch (VerificationFailedException e) {
         log.error(e.getMessage());
