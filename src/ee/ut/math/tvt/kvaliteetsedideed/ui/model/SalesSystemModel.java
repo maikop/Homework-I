@@ -1,6 +1,9 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.model;
 
 import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import org.apache.log4j.Logger;
 
 /**
@@ -18,6 +21,7 @@ public class SalesSystemModel {
 
   // Purchase history model
   private PurchaseHistoryTableModel purchaseHistoryTableModel;
+  private DefaultComboBoxModel<StockItem> stockComboBoxModel;
 
   private final SalesDomainController domainController;
 
@@ -38,6 +42,12 @@ public class SalesSystemModel {
     // populate stock model with data from the warehouse
     warehouseTableModel.populateWithData(domainController.loadWarehouseState());
     purchaseHistoryTableModel.populateWithData(domainController.loadPurchaseHistory());
+    List<StockItem> stockItems = domainController.loadWarehouseState();
+    stockComboBoxModel = new DefaultComboBoxModel<StockItem>(stockItems.toArray(new StockItem[stockItems.size()]));
+  }
+
+  public DefaultComboBoxModel<StockItem> getStockComboBoxModel() {
+    return stockComboBoxModel;
   }
 
   public StockTableModel getWarehouseTableModel() {

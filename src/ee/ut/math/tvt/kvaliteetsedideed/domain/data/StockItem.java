@@ -92,6 +92,10 @@ public class StockItem implements Cloneable, DisplayableItem {
     return id + " " + name + " " + description + " " + price;
   }
 
+  public void decreaseStock(Integer amount) {
+    quantity -= amount;
+  }
+
   /**
    * Method for querying the value of a certain column when StockItems are shown
    * as table rows in the SalesSstemTableModel. The order of the columns is: id,

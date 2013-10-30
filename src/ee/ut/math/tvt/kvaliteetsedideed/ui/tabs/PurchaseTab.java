@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 /**
@@ -36,6 +37,7 @@ public class PurchaseTab {
   private PurchaseItemPanel purchasePane;
 
   private SalesSystemModel model;
+  private JPanel rootPanel;
 
   public PurchaseTab(SalesDomainController controller, SalesSystemModel model) {
     this.domainController = controller;
@@ -47,20 +49,20 @@ public class PurchaseTab {
    * and shopping cart table.
    */
   public Component draw() {
-    JPanel panel = new JPanel();
+    rootPanel = new JPanel();
 
     // Layout
-    panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-    panel.setLayout(new GridBagLayout());
+    rootPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    rootPanel.setLayout(new GridBagLayout());
 
     // Add the purchase menu
-    panel.add(getPurchaseMenuPane(), getConstraintsForPurchaseMenu());
+    rootPanel.add(getPurchaseMenuPane(), getConstraintsForPurchaseMenu());
 
     // Add the main purchase-panel
     purchasePane = new PurchaseItemPanel(model, domainController);
-    panel.add(purchasePane, getConstraintsForPurchasePanel());
+    rootPanel.add(purchasePane, getConstraintsForPurchasePanel());
 
-    return panel;
+    return rootPanel;
   }
 
   // The purchase menu. Contains buttons "New purchase", "Submit", "Cancel".
@@ -153,10 +155,15 @@ public class PurchaseTab {
 
   /** Event handler for the <code>submit purchase</code> event. */
   protected void submitPurchaseButtonClicked() {
+    if (model.getCurrentPurchaseTableModel().getRowCount() == 0) {
+      return;
+    }
     try {
       log.debug("Contents of the current basket:\n" + model.getCurrentPurchaseTableModel());
       PurchaseItem purchaseItem = domainController.createPurchaseItem(model.getCurrentPurchaseTableModel().getTableRows());
-      new PurchaseConfirmDialog(purchaseItem);
+      Component parentComponent = SwingUtilities.getRoot(rootPanel);
+      new PurchaseConfirmDialog(purchaseItem, parentComponent);
+
       if (purchaseItem.isConfirmed()) {
         domainController.submitCurrentPurchase(purchaseItem);
         model.getPurchaseHistoryTableModel().populateWithData(domainController.loadPurchaseHistory());

@@ -47,4 +47,6 @@ public interface SalesDomainController {
 
   public PurchaseItem createPurchaseItem(List<SoldItem> goods);
 
+  public void addStockItem(StockItem item);
+
 }
