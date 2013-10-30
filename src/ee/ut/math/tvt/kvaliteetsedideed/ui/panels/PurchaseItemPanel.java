@@ -104,7 +104,6 @@ public class PurchaseItemPanel extends JPanel {
 
     nameField.setEditable(false);
     priceField.setEditable(false);
-
     // == Add components to the panel
 
     // - product
