@@ -93,7 +93,6 @@ public class StockTab {
     }
   }
 
-  // ITEM ADDING FUNCTIONALITY HERE:
   private void addNewItem() {
 
     StockItem newItem = new StockItem();
@@ -117,7 +116,7 @@ public class StockTab {
     JTextField price = new JTextField(3);
 
     JPanel panel = new JPanel();
-    panel.add(new JLabel("New Item name:"));
+    panel.add(new JLabel("Product name:"));
     panel.add(name);
     panel.add(Box.createVerticalStrut(15)); // a spacer
     panel.add(new JLabel("Quantity:"));
@@ -126,7 +125,7 @@ public class StockTab {
     panel.add(new JLabel("Price:"));
     panel.add(price);
 
-    int result = JOptionPane.showConfirmDialog(null, panel, "Fill in the new item data", JOptionPane.OK_CANCEL_OPTION);
+    int result = JOptionPane.showConfirmDialog(null, panel, "Adding new product", JOptionPane.OK_CANCEL_OPTION);
 
     if (result == JOptionPane.OK_OPTION) {
       item.setName(name.getText());
