@@ -5,7 +5,6 @@ import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 
-
 /**
  * Main model. Holds all the other models.
  */
