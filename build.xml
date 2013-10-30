@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." name="POS" default="build">
-
+	
 	<property name="build.dir" value="${basedir}/build"/>
 	<property name="build.classes.dir" value="${build.dir}/classes"/>
 	<property name="dist.dir" value="${build.dir}/jar"/>
@@ -124,22 +124,23 @@
 	</target>
 	
 			
-	<target name="git_tag" description="git tag">
-			<input message="Tag name" addproperty="name" defaultvalue="homework_"/>
-			<input message="Tag comment" addproperty="comment" defaultvalue="homework_" />
-			<exec executable="git" >
-				<arg value="tag"/>
-				<arg value="-a ${name}"/>
-				<arg value="-m ${comment}"/>
-				
-			</exec>
-			<exec executable="git" >
-				<input message="Tag name" addproperty="tags" />
-				<arg value="push"/>
-				<arg value= "--${tags}" />
-			</exec>
-		</target>
-
-	
+	<target name="git_tag" description="git tag -a name -m comment, git push" >
+		<input message="Tag name" addproperty="t.name" defaultvalue="homework_"/>
+		<input message="Tag comment" addproperty="t.comment" defaultvalue="Homework_"/>
+		<exec executable="git">
+			<arg value="tag" />
+			<arg value="-a"/>
+			<arg value="${t.name}"/>
+			<arg value="-m"/>
+			<arg value="${t.comment}"/>
+		</exec>
+		
+		<exec executable="git" >
+			<arg value="push"/>
+			<arg value="--tags"/>
+		</exec>
+		
+	</target>
+		
 
 </project>

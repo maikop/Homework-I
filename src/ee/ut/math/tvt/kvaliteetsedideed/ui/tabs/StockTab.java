@@ -9,10 +9,14 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.JTableHeader;
 
 public class StockTab {
@@ -93,16 +97,42 @@ public class StockTab {
   private void addNewItem() {
 
     StockItem newItem = new StockItem();
+    setNewItemData(newItem);
 
-    newItem.setName("New Item");
+    if (!newItem.getName().equals(null) && !newItem.getName().trim().isEmpty()) {
+      // get id of item in last row (largest id)
+      int nrRows = model.getWarehouseTableModel().getRowCount();
+      Object newId = model.getWarehouseTableModel().getValueAt(nrRows - 1, 0);
 
-    // get id of item in last row (largest id)
-    int nrRows = model.getWarehouseTableModel().getRowCount();
-    Object newId = model.getWarehouseTableModel().getValueAt(nrRows - 1, 0);
+      newItem.setId(((long) newId) + 1);
+      model.getWarehouseTableModel().addItem(newItem);
+    }
 
-    newItem.setId(((long) newId) + 1);
-    model.getWarehouseTableModel().addItem(newItem);
+  }
 
+  private void setNewItemData(StockItem item) {
+
+    JTextField name = new JTextField(10);
+    JTextField quantity = new JTextField(3);
+    JTextField price = new JTextField(3);
+
+    JPanel panel = new JPanel();
+    panel.add(new JLabel("New Item name:"));
+    panel.add(name);
+    panel.add(Box.createVerticalStrut(15)); // a spacer
+    panel.add(new JLabel("Quantity:"));
+    panel.add(quantity);
+    panel.add(Box.createVerticalStrut(15)); // a spacer
+    panel.add(new JLabel("Price:"));
+    panel.add(price);
+
+    int result = JOptionPane.showConfirmDialog(null, panel, "Fill in the new item data", JOptionPane.OK_CANCEL_OPTION);
+
+    if (result == JOptionPane.OK_OPTION) {
+      item.setName(name.getText());
+      item.setPrice(Double.parseDouble(price.getText()));
+      item.setQuantity(Integer.parseInt(quantity.getText()));
+    }
   }
 
   // table of the warehouse stock
