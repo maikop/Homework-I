@@ -115,11 +115,10 @@ public class PurchaseItemPanel extends JPanel {
       chooseProduct.addItem(si.getName());
     }
 
-    chooseProduct.addFocusListener(new FocusListener() {
-      public void focusGained(FocusEvent e) {
-      }
+    // Fill the dialog fields if the choose product menu loses focus
 
-      public void focusLost(FocusEvent e) {
+    chooseProduct.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
         fillDialogFields2();
       }
     });
@@ -244,6 +243,7 @@ public class PurchaseItemPanel extends JPanel {
     quantityField.setText("1");
     nameField.setText("");
     priceField.setText("");
+    chooseProduct.setSelectedIndex(0);
   }
 
   /*
