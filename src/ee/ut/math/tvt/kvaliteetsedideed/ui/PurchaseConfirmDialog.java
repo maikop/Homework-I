@@ -119,7 +119,7 @@ public class PurchaseConfirmDialog extends JDialog {
     Double returnAmount;
     try {
       Double paidAmount = Double.parseDouble(paidAmountTextField.getText());
-      returnAmount = paidAmount - purchaseItem.getTotalPrice();
+      returnAmount = (double) Math.round((paidAmount - purchaseItem.getTotalPrice()) * 100) / 100;
       if (returnAmount < 0) {
         confirmButton.setText("Paid amount too small");
         confirmButton.setEnabled(false);
