@@ -9,44 +9,44 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 
 /**
- * Utility class that makes sure we has a single open hibernate session.
+ * Utility class that makes sure we have a single open hibernate session.
  */
 public class HibernateUtil {
-	private static final Logger log = Logger.getLogger(HibernateUtil.class);
+  private static final Logger log = Logger.getLogger(HibernateUtil.class);
 
-	private static ServiceRegistry serviceRegistry;
-	public static final SessionFactory sessionFactory;
+  private static ServiceRegistry serviceRegistry;
+  public static final SessionFactory sessionFactory;
 
-	static {
-		try {
-			// Create the SessionFactory from hibernate.cfg.xml
-			Configuration configuration = new Configuration();
-			configuration.configure();
+  static {
+    try {
+      // Create the SessionFactory from hibernate.cfg.xml
+      Configuration configuration = new Configuration();
+      configuration.configure();
 
-			serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
-			sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+      serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
+      sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 
-		} catch (Throwable ex) {
-			// Make sure you log the exception, as it might be swallowed
-			log.error("Initial SessionFactory creation failed.", ex);
-			throw new ExceptionInInitializerError(ex);
-		}
-	}
+    } catch (Throwable ex) {
+      // Make sure you log the exception, as it might be swallowed
+      log.error("Initial SessionFactory creation failed.", ex);
+      throw new ExceptionInInitializerError(ex);
+    }
+  }
 
-	private static Session session;
+  private static Session session;
 
-	public static Session currentSession() throws HibernateException {
-		// Open a new Session, if this thread has none yet
-		if (session == null) {
-			session = sessionFactory.openSession();
-		}
-		return session;
-	}
+  public static Session currentSession() throws HibernateException {
+    // Open a new Session, if this thread has none yet
+    if (session == null) {
+      session = sessionFactory.openSession();
+    }
+    return session;
+  }
 
-	public static void closeSession() throws HibernateException {
-		if (session != null)
-			session.close();
-		session = null;
-	}
+  public static void closeSession() throws HibernateException {
+    if (session != null)
+      session.close();
+    session = null;
+  }
 
 }
