@@ -1,6 +1,6 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.tabs;
 
-import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.Purchase;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.model.PurchaseInfoTableModel;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.model.SalesSystemModel;
 import java.awt.Color;
@@ -64,7 +64,7 @@ public class HistoryTab {
           selectedIndex = e.getLastIndex();
           table.setRowSelectionInterval(selectedIndex, selectedIndex);
         }
-        PurchaseItem selectedItem = model.getPurchaseHistoryTableModel().getTableRows().get(selectedIndex);
+        Purchase selectedItem = model.getPurchaseHistoryTableModel().getTableRows().get(selectedIndex);
         purchaseInfoTableModel.populateWithData(selectedItem.getSoldItems());
         purchaseInfoTableModel.fireTableDataChanged();
 

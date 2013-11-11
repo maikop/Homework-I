@@ -1,21 +1,26 @@
 package ee.ut.math.tvt.kvaliteetsedideed.domain.controller.impl;
 
 import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
-import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.Purchase;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.SoldItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
+import ee.ut.math.tvt.kvaliteetsedideed.util.HibernateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.Session;
 
 /**
  * Implementation of the sales domain controller.
  */
+@SuppressWarnings("unchecked")
 public class SalesDomainControllerImpl implements SalesDomainController {
 
-  private List<PurchaseItem> purchaseItems = new ArrayList<PurchaseItem>();
+  private List<Purchase> purchaseItems = new ArrayList<Purchase>();
   private List<StockItem> stockItems = new ArrayList<StockItem>();
+
+  private Session session = HibernateUtil.currentSession();
 
   public SalesDomainControllerImpl() {
 
@@ -32,8 +37,8 @@ public class SalesDomainControllerImpl implements SalesDomainController {
   }
 
   @Override
-  public PurchaseItem createPurchaseItem(List<SoldItem> goods) {
-    PurchaseItem purchaseItem = new PurchaseItem();
+  public Purchase createPurchaseItem(List<SoldItem> goods) {
+    Purchase purchaseItem = new Purchase();
     purchaseItem.setSoldItems(goods);
     purchaseItem.setPurchaseDate(new Date());
     purchaseItem.calculateTotal();
@@ -45,7 +50,7 @@ public class SalesDomainControllerImpl implements SalesDomainController {
     stockItems.add(item);
   }
 
-  public void submitCurrentPurchase(PurchaseItem purchaseItem) throws VerificationFailedException {
+  public void submitCurrentPurchase(Purchase purchaseItem) throws VerificationFailedException {
     for (SoldItem soldItem : purchaseItem.getSoldItems()) {
       soldItem.getStockItem().decreaseStock(soldItem.getQuantity());
     }
@@ -69,11 +74,18 @@ public class SalesDomainControllerImpl implements SalesDomainController {
 
   public List<StockItem> loadWarehouseState() {
     return stockItems;
+    // return session.createQuery("from Stockitem").list();
+
   }
 
   @Override
-  public List<PurchaseItem> loadPurchaseHistory() {
-    return purchaseItems;
+  public List<Purchase> loadPurchaseHistory() {
+    return session.createQuery("from Purchase").list();
+  }
+
+  @Override
+  public void endSession() {
+    HibernateUtil.closeSession();
   }
 
 }

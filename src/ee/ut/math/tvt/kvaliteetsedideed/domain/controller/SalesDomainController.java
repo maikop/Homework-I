@@ -1,6 +1,6 @@
 package ee.ut.math.tvt.kvaliteetsedideed.domain.controller;
 
-import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.Purchase;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.SoldItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
@@ -19,7 +19,7 @@ public interface SalesDomainController {
    */
   public List<StockItem> loadWarehouseState();
 
-  public List<PurchaseItem> loadPurchaseHistory();
+  public List<Purchase> loadPurchaseHistory();
 
   // business processes
   /**
@@ -43,10 +43,12 @@ public interface SalesDomainController {
    *          Goods that the buyer has chosen to buy.
    * @throws VerificationFailedException
    */
-  public void submitCurrentPurchase(PurchaseItem purchaseItem) throws VerificationFailedException;
+  public void submitCurrentPurchase(Purchase purchaseItem) throws VerificationFailedException;
 
-  public PurchaseItem createPurchaseItem(List<SoldItem> goods);
+  public Purchase createPurchaseItem(List<SoldItem> goods);
 
   public void addStockItem(StockItem item);
+
+  public void endSession();
 
 }

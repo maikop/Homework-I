@@ -1,7 +1,7 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.tabs;
 
 import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
-import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.Purchase;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.PurchaseConfirmDialog;
 import ee.ut.math.tvt.kvaliteetsedideed.ui.model.SalesSystemModel;
@@ -160,7 +160,7 @@ public class PurchaseTab {
     }
     try {
       log.debug("Contents of the current basket:\n" + model.getCurrentPurchaseTableModel());
-      PurchaseItem purchaseItem = domainController.createPurchaseItem(model.getCurrentPurchaseTableModel().getTableRows());
+      Purchase purchaseItem = domainController.createPurchaseItem(model.getCurrentPurchaseTableModel().getTableRows());
       Component parentComponent = SwingUtilities.getRoot(rootPanel);
       new PurchaseConfirmDialog(purchaseItem, parentComponent);
 

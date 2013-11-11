@@ -1,9 +1,9 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui.model;
 
-import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.Purchase;
 import java.text.SimpleDateFormat;
 
-public class PurchaseHistoryTableModel extends SalesSystemTableModel<PurchaseItem> {
+public class PurchaseHistoryTableModel extends SalesSystemTableModel<Purchase> {
 
   private static final long serialVersionUID = 1L;
 
@@ -12,7 +12,7 @@ public class PurchaseHistoryTableModel extends SalesSystemTableModel<PurchaseIte
   }
 
   @Override
-  protected Object getColumnValue(PurchaseItem item, int columnIndex) {
+  protected Object getColumnValue(Purchase item, int columnIndex) {
     switch (columnIndex) {
     case 0:
       return new SimpleDateFormat("yyyy/MM/dd HH:mm").format(item.getPurchaseDate());

@@ -1,7 +1,7 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui;
 
 import ee.ut.math.tvt.kvaliteetsedideed.domain.controller.SalesDomainController;
-import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.Purchase;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.SoldItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import ee.ut.math.tvt.kvaliteetsedideed.domain.exception.VerificationFailedException;
@@ -99,32 +99,33 @@ public class ConsoleUI {
 
     if (c[0].equals("h"))
       printUsage();
-    else if (c[0].equals("q"))
+    else if (c[0].equals("q")) {
+      dc.endSession();
       System.exit(0);
-    else if (c[0].equals("w"))
+    } else if (c[0].equals("w")) {
       showStock(warehouse);
-    else if (c[0].equals("c"))
+    } else if (c[0].equals("c")) {
       showStock(cart);
-    else if (c[0].equals("p"))
+    } else if (c[0].equals("p")) {
       try {
         List<SoldItem> soldItems = new ArrayList<SoldItem>();
         for (StockItem stockItem : cart) {
           soldItems.add(new SoldItem(stockItem, stockItem.getQuantity()));
         }
-        PurchaseItem purchaseItem = dc.createPurchaseItem(soldItems);
+        Purchase purchaseItem = dc.createPurchaseItem(soldItems);
         dc.submitCurrentPurchase(purchaseItem);
         cart.clear();
       } catch (VerificationFailedException e) {
         log.error(e.getMessage());
       }
-    else if (c[0].equals("r"))
+    } else if (c[0].equals("r")) {
       try {
         dc.cancelCurrentPurchase();
         cart.clear();
       } catch (VerificationFailedException e) {
         log.error(e.getMessage());
       }
-    else if (c[0].equals("a") && c.length == 3) {
+    } else if (c[0].equals("a") && c.length == 3) {
       int idx = Integer.parseInt(c[1]);
       int amount = Integer.parseInt(c[2]);
       StockItem item = getStockItemById(idx);
@@ -132,5 +133,4 @@ public class ConsoleUI {
       cart.add(item);
     }
   }
-
 }

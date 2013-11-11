@@ -1,6 +1,6 @@
 package ee.ut.math.tvt.kvaliteetsedideed.ui;
 
-import ee.ut.math.tvt.kvaliteetsedideed.domain.data.PurchaseItem;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.Purchase;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -21,12 +21,12 @@ public class PurchaseConfirmDialog extends JDialog {
 
   private static final long serialVersionUID = 1L;
   private GridBagConstraints gc;
-  private PurchaseItem purchaseItem;
+  private Purchase purchaseItem;
   private JTextField paidAmountTextField;
   private JTextField returnAmountTextField;
   private JButton confirmButton;
 
-  public PurchaseConfirmDialog(PurchaseItem purchaseItem, Component parent) {
+  public PurchaseConfirmDialog(Purchase purchaseItem, Component parent) {
     getRootPane().setBorder(new EmptyBorder(10, 10, 10, 10));
     setModal(true);
     setLocationRelativeTo(parent);
