@@ -73,8 +73,8 @@ public class SalesDomainControllerImpl implements SalesDomainController {
   }
 
   public List<StockItem> loadWarehouseState() {
-    return stockItems;
-    // return session.createQuery("from Stockitem").list();
+    // return stockItems;
+    return session.createQuery("from StockItem").list();
 
   }
 

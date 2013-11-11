@@ -36,6 +36,10 @@ public class Purchase implements Cloneable, DisplayableItem {
     return id;
   }
 
+  public Purchase() {
+
+  }
+
   public Date getPurchaseDate() {
     return purchaseDate;
   }
