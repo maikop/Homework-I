@@ -34,7 +34,6 @@ public class SoldItem implements Cloneable, DisplayableItem {
   private Purchase purchase;
 
   public SoldItem(StockItem stockItem, int quantity) {
-    this.id = stockItem.getId();
     this.stockItem = stockItem;
     this.quantity = quantity;
   }
@@ -43,12 +42,9 @@ public class SoldItem implements Cloneable, DisplayableItem {
 
   }
 
+  @Override
   public Long getId() {
     return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public String getName() {
