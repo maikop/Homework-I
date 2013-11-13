@@ -17,7 +17,7 @@ public class PurchaseHistoryTableModel extends SalesSystemTableModel<Purchase> {
     case 0:
       return new SimpleDateFormat("yyyy/MM/dd HH:mm").format(item.getPurchaseDate());
     case 1:
-      return item.getTotalPrice();
+      return (double) Math.round((item.getTotalPrice()) * 100) / 100;
     }
     throw new IllegalArgumentException("Column index out of range");
   }

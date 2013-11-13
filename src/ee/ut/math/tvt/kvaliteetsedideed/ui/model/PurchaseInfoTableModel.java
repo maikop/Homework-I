@@ -27,7 +27,7 @@ public class PurchaseInfoTableModel extends SalesSystemTableModel<SoldItem> {
     case 3:
       return item.getQuantity();
     case 4:
-      return item.getSum();
+      return (double) Math.round((item.getSum()) * 100) / 100;
     }
     throw new IllegalArgumentException("Column index out of range");
   }
