@@ -103,11 +103,6 @@ public class StockTab {
     setNewItemData(newItem);
 
     if (!newItem.getName().equals(null) && !newItem.getName().trim().isEmpty()) {
-      // get id of item in last row (largest id)
-      int nrRows = model.getWarehouseTableModel().getRowCount();
-      Object newId = model.getWarehouseTableModel().getValueAt(nrRows - 1, 0);
-
-      newItem.setId(((long) newId) + 1);
       domainController.addStockItem(newItem);
       model.getWarehouseTableModel().populateWithData(domainController.loadWarehouseState());
       model.getWarehouseTableModel().fireTableDataChanged();
