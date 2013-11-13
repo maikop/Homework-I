@@ -1,10 +1,12 @@
 package ee.ut.math.tvt.kvaliteetsedideed.domain.data;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -16,19 +18,23 @@ public class StockItem implements Cloneable, DisplayableItem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "ID")
   private Long id;
 
-  @Column(name = "name")
+  @Column(name = "NAME")
   private String name;
 
-  @Column(name = "price")
+  @Column(name = "PRICE")
   private double price;
 
-  @Column(name = "description")
+  @Column(name = "DESCRIPTION")
   private String description;
 
-  @Column(name = "quantity")
+  @Column(name = "QUANTITY")
   private int quantity;
+
+  @OneToMany(mappedBy = "stockItem")
+  private List<SoldItem> soldItems;
 
   /**
    * Constucts new <code>StockItem</code> with the specified values.

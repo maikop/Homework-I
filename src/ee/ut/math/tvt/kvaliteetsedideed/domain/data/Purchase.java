@@ -18,6 +18,7 @@ public class Purchase implements Cloneable, DisplayableItem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "ID")
   private Long id;
 
   @OneToMany(mappedBy = "purchase")
@@ -36,6 +37,10 @@ public class Purchase implements Cloneable, DisplayableItem {
     return id;
   }
 
+  public Purchase() {
+
+  }
+
   public Date getPurchaseDate() {
     return purchaseDate;
   }
@@ -45,6 +50,9 @@ public class Purchase implements Cloneable, DisplayableItem {
   }
 
   public Double getTotalPrice() {
+    if (totalPrice == null) {
+      calculateTotal();
+    }
     return totalPrice;
   }
 

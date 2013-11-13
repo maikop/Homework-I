@@ -19,7 +19,7 @@ public class PurchaseInfoTableModel extends SalesSystemTableModel<SoldItem> {
   protected Object getColumnValue(SoldItem item, int columnIndex) {
     switch (columnIndex) {
     case 0:
-      return item.getId();
+      return item.getStockItem().getId();
     case 1:
       return item.getName();
     case 2:
@@ -65,7 +65,7 @@ public class PurchaseInfoTableModel extends SalesSystemTableModel<SoldItem> {
     boolean itemExists = false;
 
     for (final SoldItem row : rows) {
-      if (row.getId().equals(item.getId())) {
+      if (row.getStockItem().getId().equals(item.getStockItem().getId())) {
         newQuantity += row.getQuantity();
         itemExists = true;
         row.setQuantity(newQuantity);
@@ -77,5 +77,14 @@ public class PurchaseInfoTableModel extends SalesSystemTableModel<SoldItem> {
 
     log.debug("Added " + item.getName() + " quantity of " + item.getQuantity());
     fireTableDataChanged();
+  }
+
+  public SoldItem getItemByStockItemId(Long id) {
+    for (SoldItem soldItem : rows) {
+      if (id == soldItem.getStockItem().getId()) {
+        return soldItem;
+      }
+    }
+    return null;
   }
 }

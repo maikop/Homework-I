@@ -246,11 +246,9 @@ public class PurchaseItemPanel extends JPanel {
 
     StockItem selectdItem = ((StockItem) model.getStockComboBoxModel().getSelectedItem());
     Integer inCartQuantity = 0;
-    try {
-      SoldItem inCartItem = model.getCurrentPurchaseTableModel().getItemById(selectdItem.getId());
-      inCartQuantity = inCartItem.getQuantity();
-    } catch (NoSuchElementException e) {
-    }
+    SoldItem inCartItem = model.getCurrentPurchaseTableModel().getItemByStockItemId(selectdItem.getId());
+    inCartQuantity = inCartItem == null ? 0 : inCartItem.getQuantity();
+
     if (inCartQuantity + wantedQuantity > selectdItem.getQuantity()) {
       JOptionPane.showMessageDialog(this, "Your desired quantity exceeds the amount in stock!");
 
