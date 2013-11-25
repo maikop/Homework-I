@@ -11,70 +11,69 @@ import java.util.List;
  */
 public class SalesSystemModel {
 
-    // Warehouse model
-    private StockTableModel warehouseTableModel;
+	// Warehouse model
+	private final StockTableModel warehouseTableModel;
 
-    // Current shopping cart model
-    private PurchaseInfoTableModel currentPurchaseTableModel;
+	// Current shopping cart model
+	private final PurchaseInfoTableModel currentPurchaseTableModel;
+	// Puchase history model
+	private PurchaseHistoryTableModel purchaseHistoryTableModel;
 
-    // Puchase history model
-    private PurchaseHistoryTableModel purchaseHistoryTableModel;
+	private final ClientTableModel clientTableModel;
+	private Sale activeSale;
 
-    private ClientTableModel clientTableModel;
+	/**
+	 * Construct application model.
+	 * 
+	 * @param domainController
+	 *          Sales domain controller.
+	 */
+	public SalesSystemModel(SalesDomainController domainController) {
 
-    private Client selectedClient;
+		warehouseTableModel = new StockTableModel(domainController);
+		currentPurchaseTableModel = new PurchaseInfoTableModel(domainController);
+		purchaseHistoryTableModel = new PurchaseHistoryTableModel(domainController);
+		clientTableModel = new ClientTableModel(domainController);
 
-    /**
-     * Construct application model.
-     * @param domainController Sales domain controller.
-     */
-    public SalesSystemModel(SalesDomainController domainController) {
+		// Load data from the database
 
-        warehouseTableModel = new StockTableModel();
-        currentPurchaseTableModel = new PurchaseInfoTableModel(this);
-        purchaseHistoryTableModel = new PurchaseHistoryTableModel();
-        clientTableModel = new ClientTableModel();
+		List<StockItem> stockItems = domainController.getAllStockItems();
+		warehouseTableModel.populateWithData(stockItems);
 
-        // Load data from the database
+		List<Client> clients = domainController.getAllClients();
+		clientTableModel.populateWithData(clients);
 
-        List<StockItem> stockItems = domainController.getAllStockItems();
-        warehouseTableModel.populateWithData(stockItems);
+		List<Sale> sales = domainController.getAllSales();
+		purchaseHistoryTableModel.populateWithData(sales);
 
-        List<Client> clients = domainController.getAllClients();
-        clientTableModel.populateWithData(clients);
+	}
 
-        List<Sale> sales = domainController.getAllSales();
-        purchaseHistoryTableModel.populateWithData(sales);
+	public StockTableModel getWarehouseTableModel() {
+		return warehouseTableModel;
+	}
 
-    }
+	public PurchaseInfoTableModel getCurrentPurchaseTableModel() {
+		return currentPurchaseTableModel;
+	}
 
-    public StockTableModel getWarehouseTableModel() {
-        return warehouseTableModel;
-    }
+	public PurchaseHistoryTableModel getPurchaseHistoryTableModel() {
+		return purchaseHistoryTableModel;
+	}
 
-    public PurchaseInfoTableModel getCurrentPurchaseTableModel() {
-        return currentPurchaseTableModel;
-    }
+	public ClientTableModel getClientTableModel() {
+		return clientTableModel;
+	}
 
-    public PurchaseHistoryTableModel getPurchaseHistoryTableModel() {
-        return purchaseHistoryTableModel;
-    }
+	public void setPurchaseHistoryTableModel(PurchaseHistoryTableModel purchaseHistoryTableModel) {
+		this.purchaseHistoryTableModel = purchaseHistoryTableModel;
+	}
 
-    public ClientTableModel getClientTableModel() {
-        return clientTableModel;
-    }
+	public void setActiveSale(Sale activeSale) {
+		this.activeSale = activeSale;
+	}
 
-    public void setPurchaseHistoryTableModel(
-            PurchaseHistoryTableModel purchaseHistoryTableModel) {
-        this.purchaseHistoryTableModel = purchaseHistoryTableModel;
-    }
-
-    public Client getSelectedClient() {
-        return selectedClient;
-    }
-
-    public void setSelectedClient(Client client) {
-        this.selectedClient = client;
-    }
+	public Sale getActiveSale() {
+		return activeSale;
+	}
 
 }

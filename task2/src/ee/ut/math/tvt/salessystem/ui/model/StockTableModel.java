@@ -1,10 +1,11 @@
 package ee.ut.math.tvt.salessystem.ui.model;
 
-import java.util.NoSuchElementException;
-
-import org.apache.log4j.Logger;
-
+import ee.ut.math.tvt.salessystem.domain.controller.SalesDomainController;
 import ee.ut.math.tvt.salessystem.domain.data.StockItem;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import org.apache.log4j.Logger;
 
 /**
  * Stock item table model.
@@ -13,9 +14,13 @@ public class StockTableModel extends SalesSystemTableModel<StockItem> {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(StockTableModel.class);
+	private List<StockItem> stockItems = new ArrayList<>();
 
-	public StockTableModel() {
-		super(new String[] {"Id", "Name", "Price", "Quantity"});
+	private final SalesDomainController controller;
+
+	public StockTableModel(SalesDomainController controller) {
+		super(new String[] { "Id", "Name", "Price", "Quantity" });
+		this.controller = controller;
 	}
 
 	@Override
@@ -34,48 +39,44 @@ public class StockTableModel extends SalesSystemTableModel<StockItem> {
 	}
 
 	/**
-	 * Add new stock item to table. If there already is a stock item with
-	 * same id, then existing item's quantity will be increased.
+	 * Add new stock item to table. If there already is a stock item with same id,
+	 * then existing item's quantity will be increased.
+	 * 
 	 * @param stockItem
 	 */
 	public void addItem(final StockItem stockItem) {
 		try {
 			StockItem item = getItemById(stockItem.getId());
 			item.setQuantity(item.getQuantity() + stockItem.getQuantity());
-			log.debug("Found existing item " + stockItem.getName()
-					+ " increased quantity by " + stockItem.getQuantity());
-		}
-		catch (NoSuchElementException e) {
-			rows.add(stockItem);
-			log.debug("Added " + stockItem.getName()
-					+ " quantity of " + stockItem.getQuantity());
+			log.debug("Found existing item " + stockItem.getName() + " increased quantity by "
+			    + stockItem.getQuantity());
+		} catch (NoSuchElementException e) {
+			stockItems.add(stockItem);
+			log.debug("Added " + stockItem.getName() + " quantity of " + stockItem.getQuantity());
 		}
 		fireTableDataChanged();
 	}
 
-	
-	
 	public boolean hasEnoughInStock(StockItem item, int quantity) {
-	    for(StockItem i : this.rows) {
-	        if (i.getId().equals(item.getId())) {
-	            return (i.getQuantity() >= quantity);
-	        }
-	    }
-	    return false;
+		for (StockItem i : stockItems) {
+			if (i.getId().equals(item.getId())) {
+				return (i.getQuantity() >= quantity);
+			}
+		}
+		return false;
 	}
-	
+
 	public boolean validateNameUniqueness(String newName) {
-	    for (StockItem item : rows) {
-	        log.debug(" === Comparing: " + newName + " vs. " + item.getName());
-	        
-	        if (newName.equals(item.getName())) {
-	            return false;
-	        }
-	    }
-	    return true;
+		for (StockItem item : stockItems) {
+			log.debug(" === Comparing: " + newName + " vs. " + item.getName());
+
+			if (newName.equals(item.getName())) {
+				return false;
+			}
+		}
+		return true;
 	}
-	
-	
+
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer();
@@ -84,7 +85,7 @@ public class StockTableModel extends SalesSystemTableModel<StockItem> {
 			buffer.append(headers[i] + "\t");
 		buffer.append("\n");
 
-		for (final StockItem stockItem : rows) {
+		for (final StockItem stockItem : stockItems) {
 			buffer.append(stockItem.getId() + "\t");
 			buffer.append(stockItem.getName() + "\t");
 			buffer.append(stockItem.getPrice() + "\t");
@@ -93,6 +94,21 @@ public class StockTableModel extends SalesSystemTableModel<StockItem> {
 		}
 
 		return buffer.toString();
+	}
+
+	@Override
+	public List<StockItem> getRows() {
+		return stockItems;
+	}
+
+	@Override
+	public void clearRows() {
+		stockItems = new ArrayList<>();
+	}
+
+	@Override
+	public void refresh() {
+		stockItems = controller.getAllStockItems();
 	}
 
 }

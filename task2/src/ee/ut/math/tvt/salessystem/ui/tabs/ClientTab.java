@@ -12,7 +12,7 @@ import javax.swing.JTable;
 import ee.ut.math.tvt.salessystem.ui.model.SalesSystemModel;
 
 
-public class ClientTab {
+public class ClientTab implements SalesSystemTab {
     
     private SalesSystemModel model;
     
@@ -22,8 +22,8 @@ public class ClientTab {
     
     /**
      * The main entry-point method. Creates the tab.
-     */
-    public Component draw() {
+     */ 
+    public Component draw() { 
         JPanel panel = new JPanel();
         
         GridBagConstraints gc = getGbConstraints();
@@ -64,6 +64,16 @@ public class ClientTab {
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         return gc;
-    }    
+    }
+
+	@Override
+	public String getName() {
+		return "Clients";
+	}
+
+	@Override
+	public void refreshContents() {
+		model.getClientTableModel().refresh();
+	}    
     
 }
