@@ -231,8 +231,6 @@ public class PurchaseItemPanel extends JPanel {
    * @throws VerificationFailedException
    */
   public void addItemEventHandler() throws VerificationFailedException {
-
-    // if customer wants to buy more products than are in stock, throw error
     Integer wantedQuantity;
     try {
       wantedQuantity = Integer.parseInt(quantityField.getText());
@@ -240,29 +238,13 @@ public class PurchaseItemPanel extends JPanel {
       wantedQuantity = 0;
       log.warn("Invalid number entered for quantity!");
     }
-    if (wantedQuantity == 0) {
-      return;
-    }
-
-    StockItem selectdItem = ((StockItem) model.getStockComboBoxModel().getSelectedItem());
-    Integer inCartQuantity = 0;
-    SoldItem inCartItem = model.getCurrentPurchaseTableModel().getItemByStockItemId(selectdItem.getId());
-    inCartQuantity = inCartItem == null ? 0 : inCartItem.getQuantity();
-
-    if (inCartQuantity + wantedQuantity > selectdItem.getQuantity()) {
-      JOptionPane.showMessageDialog(this, "Your desired quantity exceeds the amount in stock!");
-
-    } else {
-      // add chosen item to the shopping cart.
-      StockItem stockItem = getStockItemByBarcode();
-      if (stockItem != null) {
-        int quantity;
-        try {
-          quantity = Integer.parseInt(quantityField.getText());
-        } catch (NumberFormatException ex) {
-          quantity = 1;
-        }
-        model.getCurrentPurchaseTableModel().addItem(new SoldItem(stockItem, quantity));
+    StockItem selectedItem = getStockItemByBarcode();
+    if (selectedItem != null && wantedQuantity != 0) {
+      try {
+        model.getCurrentPurchaseTableModel().addItem(new SoldItem(selectedItem, wantedQuantity));
+      } catch (VerificationFailedException e) {
+        JOptionPane.showMessageDialog(this, e.getMessage());
+        throw e;
       }
     }
   }

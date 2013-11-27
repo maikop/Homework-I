@@ -28,7 +28,7 @@ public class SalesSystemModel {
    */
   public SalesSystemModel(SalesDomainController domainController) {
     warehouseTableModel = new StockTableModel();
-    currentPurchaseTableModel = new PurchaseInfoTableModel();
+    currentPurchaseTableModel = new PurchaseInfoTableModel(this);
 
     purchaseHistoryTableModel = new PurchaseHistoryTableModel();
 
