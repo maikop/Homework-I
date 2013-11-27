@@ -66,22 +66,6 @@ public class StockTableModel extends SalesSystemTableModel<StockItem> {
 		return false;
 	}
 
-	// @Override
-	// public SoldItem verifyEnoughInStock(StockItem stockItem, int quantity)
-	// throws SalesSystemException {
-	// SoldItem existingItem =
-	// model.getActiveSale().getForStockItem(stockItem.getId());
-	// int existingQuantity = 0;
-	// if (existingItem != null) {
-	// existingQuantity = existingItem.getQuantity();
-	// }
-	// if (stockItem.getQuantity() < existingQuantity + quantity) {
-	// log.info(" -- not enough in stock!");
-	// throw new SalesSystemException();
-	// }
-	// return existingItem;
-	// }
-
 	public boolean validateNameUniqueness(String newName) {
 		for (StockItem item : stockItems) {
 			log.debug(" === Comparing: " + newName + " vs. " + item.getName());

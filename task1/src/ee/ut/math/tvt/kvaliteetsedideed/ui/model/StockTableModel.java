@@ -58,6 +58,17 @@ public class StockTableModel extends SalesSystemTableModel<StockItem> {
     return false;
   }
 
+  public boolean validateNameUniqueness(String newName) {
+    for (StockItem item : rows) {
+      log.debug(" === Comparing: " + newName + " vs. " + item.getName());
+
+      if (newName.equals(item.getName())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @Override
   public String toString() {
     final StringBuffer buffer = new StringBuffer();

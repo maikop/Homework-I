@@ -74,13 +74,16 @@ public class PurchaseInfoTableModel extends SalesSystemTableModel<SoldItem> {
       }
     }
     if (model.getWarehouseTableModel().hasEnoughInStock(item.getStockItem(), wantedQuantity)) {
-      if (existingItem != null) {
-        existingItem.setQuantity(wantedQuantity);
-      } else {
-        rows.add(item);
-      }
-    } else {
       throw new VerificationFailedException("Your desired quantity exceeds the amount in stock!");
+    }
+    if (model.getWarehouseTableModel().validateNameUniqueness(item.getName())) {
+      throw new VerificationFailedException("An item with the same name already exists!");
+    }
+
+    if (existingItem != null) {
+      existingItem.setQuantity(wantedQuantity);
+    } else {
+      rows.add(item);
     }
     fireTableDataChanged();
   }

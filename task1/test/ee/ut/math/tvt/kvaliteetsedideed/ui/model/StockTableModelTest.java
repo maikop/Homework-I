@@ -1,6 +1,6 @@
-package ee.ut.math.tvt.kvaliteetsedideed.domain.data;
+package ee.ut.math.tvt.kvaliteetsedideed.ui.model;
 
-import ee.ut.math.tvt.kvaliteetsedideed.ui.model.StockTableModel;
+import ee.ut.math.tvt.kvaliteetsedideed.domain.data.StockItem;
 import java.util.NoSuchElementException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,7 +22,8 @@ public class StockTableModelTest {
 
   @Test
   public void testValidateNameUniqueness() {
-
+    Assert.assertTrue(model.validateNameUniqueness("test100"));
+    Assert.assertFalse(model.validateNameUniqueness("test1"));
   }
 
   @Test
