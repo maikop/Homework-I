@@ -2,7 +2,6 @@ package ee.ut.math.tvt.salessystem.ui.tabs;
 
 import ee.ut.math.tvt.salessystem.domain.controller.SalesDomainController;
 import ee.ut.math.tvt.salessystem.domain.data.Client;
-import ee.ut.math.tvt.salessystem.domain.exception.VerificationFailedException;
 import ee.ut.math.tvt.salessystem.ui.model.SalesSystemModel;
 import ee.ut.math.tvt.salessystem.ui.panels.PurchaseItemPanel;
 import ee.ut.math.tvt.salessystem.ui.windows.PayingWindow;
@@ -19,261 +18,256 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 /**
  * Encapsulates everything that has to do with the purchase tab (the tab
  * labelled "Point-of-sale" in the menu).
  */
-public class PurchaseTab {
+public class PurchaseTab implements SalesSystemTab {
 
-    private static final Logger log = Logger.getLogger(PurchaseTab.class);
+	private static final Logger log = Logger.getLogger(PurchaseTab.class);
 
-    private final SalesDomainController domainController;
+	private final SalesDomainController domainController;
+	private final SalesSystemModel model;
 
-    private JButton newPurchase;
+	private final JFrame parent;
+	private PurchaseItemPanel purchasePane;
+	private JPanel panel;
+	private JButton newPurchase;
+	private JButton submitPurchase;
+	private JButton cancelPurchase;
 
-    private JButton submitPurchase;
+	public PurchaseTab(SalesDomainController controller, SalesSystemModel model, JFrame parent) {
+		this.domainController = controller;
+		this.model = model;
+		this.parent = parent;
+	}
 
-    private JButton cancelPurchase;
+	/**
+	 * The purchase tab. Consists of the purchase menu, current purchase dialog
+	 * and shopping cart table.
+	 */
+	@Override
+	public Component draw() {
+		panel = new JPanel();
 
-    private PurchaseItemPanel purchasePane;
+		// Layout
+		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		panel.setLayout(new GridBagLayout());
 
-    private SalesSystemModel model;
+		// Add the purchase menu
+		panel.add(getPurchaseMenuPane(), getConstraintsForPurchaseMenu());
 
-    private JFrame parent;
+		// Add the main purchase-panel
+		purchasePane = new PurchaseItemPanel(model);
+		panel.add(purchasePane, getConstraintsForPurchasePanel());
 
-    public PurchaseTab(SalesDomainController controller, SalesSystemModel model,
-            JFrame parent) {
-        this.domainController = controller;
-        this.model = model;
-        this.parent = parent;
-    }
+		return panel;
+	}
 
-    /**
-     * The purchase tab. Consists of the purchase menu, current purchase dialog
-     * and shopping cart table.
-     */
-    public Component draw() {
-        JPanel panel = new JPanel();
+	// The purchase menu. Contains buttons "New purchase", "Submit", "Cancel".
+	private Component getPurchaseMenuPane() {
+		JPanel panel = new JPanel();
 
-        // Layout
-        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        panel.setLayout(new GridBagLayout());
+		// Initialize layout
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints gc = getConstraintsForMenuButtons();
 
-        // Add the purchase menu
-        panel.add(getPurchaseMenuPane(), getConstraintsForPurchaseMenu());
+		// Initialize the buttons
+		newPurchase = createNewPurchaseButton();
+		submitPurchase = createConfirmButton();
+		cancelPurchase = createCancelButton();
 
-        // Add the main purchase-panel
-        purchasePane = new PurchaseItemPanel(model);
-        panel.add(purchasePane, getConstraintsForPurchasePanel());
+		// Add the buttons to the panel, using GridBagConstraints we defined
+		// above
+		panel.add(newPurchase, gc);
+		panel.add(submitPurchase, gc);
+		panel.add(cancelPurchase, gc);
 
-        return panel;
-    }
+		return panel;
+	}
 
-    // The purchase menu. Contains buttons "New purchase", "Submit", "Cancel".
-    private Component getPurchaseMenuPane() {
-        JPanel panel = new JPanel();
+	// Creates the button "New purchase"
+	private JButton createNewPurchaseButton() {
+		JButton b = new JButton("New purchase");
+		b.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				newPurchaseButtonClicked();
+			}
+		});
 
-        // Initialize layout
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints gc = getConstraintsForMenuButtons();
+		return b;
+	}
 
-        // Initialize the buttons
-        newPurchase = createNewPurchaseButton();
-        submitPurchase = createConfirmButton();
-        cancelPurchase = createCancelButton();
+	// Creates the "Confirm" button
+	private JButton createConfirmButton() {
+		JButton confirmButton = new JButton("Confirm");
+		confirmButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				startPayingPurchase();
+			}
+		});
+		confirmButton.setEnabled(false);
 
-        // Add the buttons to the panel, using GridBagConstraints we defined
-        // above
-        panel.add(newPurchase, gc);
-        panel.add(submitPurchase, gc);
-        panel.add(cancelPurchase, gc);
+		return confirmButton;
+	}
 
-        return panel;
-    }
+	// Creates the "Cancel" button
+	private JButton createCancelButton() {
+		JButton b = new JButton("Cancel");
+		b.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelPurchaseButtonClicked();
+			}
+		});
+		b.setEnabled(false);
 
-    // Creates the button "New purchase"
-    private JButton createNewPurchaseButton() {
-        JButton b = new JButton("New purchase");
-        b.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                newPurchaseButtonClicked();
-            }
-        });
+		return b;
+	}
 
-        return b;
-    }
+	/*
+	 * === Event handlers for the menu buttons (get executed when the buttons are
+	 * clicked)
+	 */
 
-    // Creates the "Confirm" button
-    private JButton createConfirmButton() {
-        JButton confirmButton = new JButton("Confirm");
-        confirmButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                startPayingPurchase();
-            }
-        });
-        confirmButton.setEnabled(false);
+	/** Event handler for the <code>new purchase</code> event. */
+	protected void newPurchaseButtonClicked() {
+		log.info("New sale process started");
+		Client client = showSelectClientDialog();
 
-        return confirmButton;
-    }
+		domainController.startNewPurchase(client);
+		startNewSale();
+	}
 
-    // Creates the "Cancel" button
-    private JButton createCancelButton() {
-        JButton b = new JButton("Cancel");
-        b.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cancelPurchaseButtonClicked();
-            }
-        });
-        b.setEnabled(false);
+	/** Event handler for the <code>cancel purchase</code> event. */
+	protected void cancelPurchaseButtonClicked() {
+		log.info("Sale cancelled");
+		domainController.cancelCurrentPurchase();
+		endSale();
+		model.getCurrentPurchaseTableModel().clear();
 
-        return b;
-    }
+	}
 
-    /*
-     * === Event handlers for the menu buttons (get executed when the buttons
-     * are clicked)
-     */
+	/** Event handler for the <code>submit purchase</code> event. */
+	protected void startPayingPurchase() {
+		double price = model.getActiveSale().getSum();
+		PayingWindow.show(price, this);
+	}
 
-    /** Event handler for the <code>new purchase</code> event. */
-    protected void newPurchaseButtonClicked() {
-        log.info("New sale process started");
-        domainController.startNewPurchase();
-        startNewSale();
-    }
+	public void endPurchaseAfterPaying() {
+		log.info("Sale complete");
+		log.debug("Contents of the current basket:\n" + model.getActiveSale());
+		domainController.registerSale(model.getActiveSale());
+		endSale();
+		model.getCurrentPurchaseTableModel().clear();
 
-    /** Event handler for the <code>cancel purchase</code> event. */
-    protected void cancelPurchaseButtonClicked() {
-        log.info("Sale cancelled");
-        domainController.cancelCurrentPurchase();
-        endSale();
-        model.getCurrentPurchaseTableModel().clear();
+	}
 
-    }
+	public void cancelPaying() {
+		submitPurchase.setEnabled(true);
+		cancelPurchase.setEnabled(true);
+		purchasePane.setEnabled(true);
+	}
 
-    /** Event handler for the <code>submit purchase</code> event. */
-    protected void startPayingPurchase() {
-        double price = model.getCurrentPurchaseTableModel().getTotalPrice();
-        PayingWindow.show(price, this);
-    }
+	/*
+	 * === Helper methods that bring the whole purchase-tab to a certain state
+	 * when called.
+	 */
 
+	// switch UI to the state that allows to proceed with the purchase
+	private void startNewSale() {
+		purchasePane.reset();
 
-    public void endPurchaseAfterPaying() {
-        log.info("Sale complete");
-        try {
+		purchasePane.setEnabled(true);
+		submitPurchase.setEnabled(true);
+		cancelPurchase.setEnabled(true);
+		newPurchase.setEnabled(false);
+	}
 
-            log.debug("Contents of the current basket:\n"
-                    + model.getCurrentPurchaseTableModel());
-            domainController.submitCurrentPurchase(
-                    model.getCurrentPurchaseTableModel().getTableRows(),
-                    model.getSelectedClient());
-            endSale();
-            model.getCurrentPurchaseTableModel().clear();
-        } catch (VerificationFailedException e1) {
-            log.error(e1.getMessage());
-        }
-    }
+	private Client showSelectClientDialog() {
+		List<Client> clients = domainController.getAllClients();
 
-    public void cancelPaying() {
-        submitPurchase.setEnabled(true);
-        cancelPurchase.setEnabled(true);
-        purchasePane.setEnabled(true);
-    }
+		Client currentClient = (Client) JOptionPane.showInputDialog(SwingUtilities.getRootPane(panel),
+		    "Choose client", "Choose client", JOptionPane.OK_CANCEL_OPTION, (Icon) null,
+		    clients.toArray(), null);
 
+		if (currentClient != null) {
+			log.info("Client " + currentClient.getFirstName() + " with ID=" + currentClient.getId()
+			    + " got selected.");
+		} else {
+			log.info("No client selected");
+		}
+		// update selected client
+		return currentClient;
+	}
 
+	// switch UI to the state that allows to initiate new purchase
+	private void endSale() {
+		purchasePane.reset();
 
-    /*
-     * === Helper methods that bring the whole purchase-tab to a certain state
-     * when called.
-     */
+		cancelPurchase.setEnabled(false);
+		submitPurchase.setEnabled(false);
+		newPurchase.setEnabled(true);
+		purchasePane.setEnabled(false);
+	}
 
-    // switch UI to the state that allows to proceed with the purchase
-    private void startNewSale() {
-        purchasePane.reset();
+	/*
+	 * === Next methods just create the layout constraints objects that control
+	 * the the layout of different elements in the purchase tab. These definitions
+	 * are brought out here to separate contents from layout, and keep the methods
+	 * that actually create the components shorter and cleaner.
+	 */
 
-        showSelectClientDialog();
+	private GridBagConstraints getConstraintsForPurchaseMenu() {
+		GridBagConstraints gc = new GridBagConstraints();
 
-        purchasePane.setEnabled(true);
-        submitPurchase.setEnabled(true);
-        cancelPurchase.setEnabled(true);
-        newPurchase.setEnabled(false);
-    }
+		gc.fill = GridBagConstraints.HORIZONTAL;
+		gc.anchor = GridBagConstraints.NORTH;
+		gc.gridwidth = GridBagConstraints.REMAINDER;
+		gc.weightx = 1.0d;
+		gc.weighty = 0d;
 
+		return gc;
+	}
 
-    private void showSelectClientDialog() {
-        List<Client> clients = domainController.getAllClients();
+	private GridBagConstraints getConstraintsForPurchasePanel() {
+		GridBagConstraints gc = new GridBagConstraints();
 
-        Client currentClient = (Client)JOptionPane.showInputDialog(
-                            parent,
-                            "Choose client",
-                            "Choose client",
-                            JOptionPane.OK_CANCEL_OPTION,
-                            (Icon) null,
-                            clients.toArray(),
-                            null);
+		gc.fill = GridBagConstraints.BOTH;
+		gc.anchor = GridBagConstraints.NORTH;
+		gc.gridwidth = GridBagConstraints.REMAINDER;
+		gc.weightx = 1.0d;
+		gc.weighty = 1.0;
 
-        if (currentClient != null) {
-            log.info("Client " + currentClient.getFirstName() + " with ID=" + currentClient.getId() + " got selected.");
-        } else {
-            log.info("No client selected");
-        }
-        // update selected client
-        model.setSelectedClient(currentClient);
-    }
+		return gc;
+	}
 
+	// The constraints that control the layout of the buttons in the purchase
+	// menu
+	private GridBagConstraints getConstraintsForMenuButtons() {
+		GridBagConstraints gc = new GridBagConstraints();
 
-    // switch UI to the state that allows to initiate new purchase
-    private void endSale() {
-        purchasePane.reset();
+		gc.weightx = 0;
+		gc.anchor = GridBagConstraints.CENTER;
+		gc.gridwidth = GridBagConstraints.RELATIVE;
 
-        cancelPurchase.setEnabled(false);
-        submitPurchase.setEnabled(false);
-        newPurchase.setEnabled(true);
-        purchasePane.setEnabled(false);
-    }
+		return gc;
+	}
 
-    /*
-     * === Next methods just create the layout constraints objects that control
-     * the the layout of different elements in the purchase tab. These
-     * definitions are brought out here to separate contents from layout, and
-     * keep the methods that actually create the components shorter and cleaner.
-     */
+	@Override
+	public String getName() {
+		return "Point-of-sale";
+	}
 
-    private GridBagConstraints getConstraintsForPurchaseMenu() {
-        GridBagConstraints gc = new GridBagConstraints();
+	@Override
+	public void refreshContents() {
+		// TODO Auto-generated method stub
 
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.NORTH;
-        gc.gridwidth = GridBagConstraints.REMAINDER;
-        gc.weightx = 1.0d;
-        gc.weighty = 0d;
-
-        return gc;
-    }
-
-    private GridBagConstraints getConstraintsForPurchasePanel() {
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.NORTH;
-        gc.gridwidth = GridBagConstraints.REMAINDER;
-        gc.weightx = 1.0d;
-        gc.weighty = 1.0;
-
-        return gc;
-    }
-
-    // The constraints that control the layout of the buttons in the purchase
-    // menu
-    private GridBagConstraints getConstraintsForMenuButtons() {
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.weightx = 0;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.gridwidth = GridBagConstraints.RELATIVE;
-
-        return gc;
-    }
+	}
 
 }

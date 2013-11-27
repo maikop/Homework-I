@@ -1,11 +1,11 @@
 package ee.ut.math.tvt.salessystem.ui.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.swing.table.AbstractTableModel;
 
+import ee.ut.math.tvt.salessystem.domain.controller.SalesDomainController;
 import ee.ut.math.tvt.salessystem.domain.data.DisplayableItem;
 
 /**
@@ -15,13 +15,12 @@ public abstract class SalesSystemTableModel<T extends DisplayableItem> extends
         AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
-
-    protected List<T> rows;
+    
     protected final String[] headers;
-
+    protected SalesDomainController controller;
+    
     public SalesSystemTableModel(final String[] headers) {
         this.headers = headers;
-        rows = new ArrayList<T>();
     }
 
     /**
@@ -43,47 +42,43 @@ public abstract class SalesSystemTableModel<T extends DisplayableItem> extends
     }
 
     public int getRowCount() {
-        return rows.size();
+        return getRows().size();
     }
 
     public Object getValueAt(final int rowIndex, final int columnIndex) {
-        return getColumnValue(rows.get(rowIndex), columnIndex);
+        return getColumnValue(getRows().get(rowIndex), columnIndex);
     }
 
     // search for item with the specified id
     public T getItemById(final long id) {
-        for (final T item : rows) {
+        for (final T item : getRows()) {
             if (item.getId() == id)
                 return item;
         }
         throw new NoSuchElementException();
     }
 
-    public List<T> getTableRows() {
-        return rows;
-    }
-
+    public abstract List<T> getRows();
+    public abstract void clearRows();
+    public abstract void refresh();
+    
     public void clear() {
-        rows = new ArrayList<T>();
+        clearRows();
         fireTableDataChanged();
     }
 
     public void populateWithData(final List<T> data) {
-        rows.clear();
-        rows.addAll(data);
+        clearRows();
+        getRows().addAll(data);
     }
     
     public void addRow(T row) {
-        rows.add(row);
+        getRows();
         fireTableDataChanged();
     }
     
     public T getRow(int index) {
-        return rows.get(index);
-    }
-    
-    public List<T> getRows() {
-        return rows;
+        return getRows().get(index);
     }
     
 }

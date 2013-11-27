@@ -1,6 +1,9 @@
 package ee.ut.math.tvt.salessystem.ui.model;
 
+import ee.ut.math.tvt.salessystem.domain.controller.SalesDomainController;
 import ee.ut.math.tvt.salessystem.domain.data.Client;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Client model.
@@ -8,8 +11,12 @@ import ee.ut.math.tvt.salessystem.domain.data.Client;
 public class ClientTableModel extends SalesSystemTableModel<Client> {
 	private static final long serialVersionUID = 1L;
 
-	public ClientTableModel() {
-		super(new String[] { "Id", "First name", "Discount"});
+	private List<Client> clients = new ArrayList<>();
+	private final SalesDomainController controller;
+
+	public ClientTableModel(SalesDomainController controller) {
+		super(new String[] { "Id", "First name", "Discount" });
+		this.controller = controller;
 	}
 
 	@Override
@@ -33,7 +40,7 @@ public class ClientTableModel extends SalesSystemTableModel<Client> {
 			buffer.append(headers[i] + "\t");
 		buffer.append("\n");
 
-		for (final Client client : rows) {
+		for (final Client client : getRows()) {
 			buffer.append(client.getId() + "\t");
 			buffer.append(client.getFirstName() + "\t");
 			buffer.append(client.getDiscountPercentage() + "\t");
@@ -41,5 +48,21 @@ public class ClientTableModel extends SalesSystemTableModel<Client> {
 		}
 
 		return buffer.toString();
+	}
+
+	@Override
+	public List<Client> getRows() {
+		return clients;
+	}
+
+	@Override
+	public void clearRows() {
+		clients = new ArrayList<>();
+	}
+
+	@Override
+	public void refresh() {
+		clients = controller.getAllClients();
+		fireTableDataChanged();
 	}
 }
