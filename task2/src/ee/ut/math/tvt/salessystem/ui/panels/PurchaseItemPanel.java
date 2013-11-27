@@ -39,7 +39,6 @@ public class PurchaseItemPanel extends JPanel {
 	private JTextField barCodeField;
 	private JTextField quantityField;
 	private JTextField priceField;
-
 	private JButton addItemButton;
 
 	// Warehouse model
@@ -102,25 +101,18 @@ public class PurchaseItemPanel extends JPanel {
 		barCodeField.setEditable(false);
 		priceField.setEditable(false);
 
-		// == Add components to the panel
-
-		// - selector
 		panel.add(new JLabel("Item:"));
 		panel.add(stockItemSelector);
 
-		// - bar code
 		panel.add(new JLabel("Bar code:"));
 		panel.add(barCodeField);
 
-		// - amount
 		panel.add(new JLabel("Amount:"));
 		panel.add(quantityField);
 
-		// - price
 		panel.add(new JLabel("Price:"));
 		panel.add(priceField);
 
-		// Create and add the button
 		addItemButton = new JButton("Add to cart");
 		addItemButton.addActionListener(new ActionListener() {
 			@Override
@@ -205,9 +197,9 @@ public class PurchaseItemPanel extends JPanel {
 	 */
 	public void reset() {
 		// Initialize the textfields
-		((DefaultComboBoxModel) stockItemSelector.getModel()).removeAllElements();
+		((DefaultComboBoxModel<StockItem>) stockItemSelector.getModel()).removeAllElements();
 		for (StockItem stockItem : model.getWarehouseTableModel().getRows()) {
-			((DefaultComboBoxModel) stockItemSelector.getModel()).addElement(stockItem);
+			((DefaultComboBoxModel<StockItem>) stockItemSelector.getModel()).addElement(stockItem);
 		}
 		barCodeField.setText("");
 		quantityField.setText("1");

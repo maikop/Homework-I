@@ -5,7 +5,6 @@ import ee.ut.math.tvt.salessystem.domain.data.Client;
 import ee.ut.math.tvt.salessystem.domain.data.Sale;
 import ee.ut.math.tvt.salessystem.domain.data.SoldItem;
 import ee.ut.math.tvt.salessystem.domain.data.StockItem;
-import ee.ut.math.tvt.salessystem.domain.exception.SalesSystemException;
 import ee.ut.math.tvt.salessystem.ui.model.SalesSystemModel;
 import ee.ut.math.tvt.salessystem.util.HibernateUtil;
 import java.util.Date;
@@ -74,21 +73,6 @@ public class SalesDomainControllerImpl implements SalesDomainController {
 	}
 
 	@Override
-	public SoldItem verifyEnoughInStock(StockItem stockItem, int quantity)
-	    throws SalesSystemException {
-		SoldItem existingItem = model.getActiveSale().getForStockItem(stockItem.getId());
-		int existingQuantity = 0;
-		if (existingItem != null) {
-			existingQuantity = existingItem.getQuantity();
-		}
-		if (stockItem.getQuantity() < existingQuantity + quantity) {
-			log.info(" -- not enough in stock!");
-			throw new SalesSystemException();
-		}
-		return existingItem;
-	}
-
-	@Override
 	public void createStockItem(StockItem stockItem) {
 		Transaction tx = session.beginTransaction();
 		session.save(stockItem);
@@ -98,13 +82,13 @@ public class SalesDomainControllerImpl implements SalesDomainController {
 
 	@Override
 	public void cancelCurrentPurchase() {
-		model.setActiveSale(null);
+		model.getCurrentPurchaseTableModel().showSale(new Sale());
 		log.info("Current purchase canceled");
 	}
 
 	@Override
 	public void startNewPurchase(Client client) {
-		model.setActiveSale(new Sale(client));
+		model.getCurrentPurchaseTableModel().showSale(new Sale(client));
 		log.info("New purchase started");
 	}
 
@@ -120,15 +104,5 @@ public class SalesDomainControllerImpl implements SalesDomainController {
 	@Override
 	public void endSession() {
 		HibernateUtil.closeSession();
-	}
-
-	@Override
-	public Sale getActiveSale() {
-		return model.getActiveSale();
-	}
-
-	@Override
-	public void addSoldItemToActiveSale(SoldItem soldItem) {
-		model.getActiveSale().addSoldItem(soldItem);
 	}
 }

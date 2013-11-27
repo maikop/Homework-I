@@ -20,7 +20,6 @@ public class SalesSystemModel {
 	private PurchaseHistoryTableModel purchaseHistoryTableModel;
 
 	private final ClientTableModel clientTableModel;
-	private Sale activeSale;
 
 	/**
 	 * Construct application model.
@@ -31,7 +30,7 @@ public class SalesSystemModel {
 	public SalesSystemModel(SalesDomainController domainController) {
 
 		warehouseTableModel = new StockTableModel(domainController);
-		currentPurchaseTableModel = new PurchaseInfoTableModel(domainController);
+		currentPurchaseTableModel = new PurchaseInfoTableModel(this);
 		purchaseHistoryTableModel = new PurchaseHistoryTableModel(domainController);
 		clientTableModel = new ClientTableModel(domainController);
 
@@ -66,14 +65,6 @@ public class SalesSystemModel {
 
 	public void setPurchaseHistoryTableModel(PurchaseHistoryTableModel purchaseHistoryTableModel) {
 		this.purchaseHistoryTableModel = purchaseHistoryTableModel;
-	}
-
-	public void setActiveSale(Sale activeSale) {
-		this.activeSale = activeSale;
-	}
-
-	public Sale getActiveSale() {
-		return activeSale;
 	}
 
 }
