@@ -88,16 +88,4 @@ public class Sale implements DisplayableItem {
 		}
 		return sum;
 	}
-
-	public SoldItem getForStockItem(Long stockItemId) {
-		if (soldItems == null)
-			return null;
-		for (SoldItem si : soldItems) {
-			if (stockItemId == si.getStockItem().getId()) {
-				return si;
-			}
-		}
-		return null;
-	}
-
 }

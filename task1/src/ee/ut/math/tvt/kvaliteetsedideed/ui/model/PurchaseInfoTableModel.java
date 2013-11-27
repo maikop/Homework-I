@@ -73,7 +73,7 @@ public class PurchaseInfoTableModel extends SalesSystemTableModel<SoldItem> {
         break;
       }
     }
-    if (model.getWarehouseTableModel().hasEnoughInStock(item.getStockItem(), wantedQuantity)) {
+    if (!model.getWarehouseTableModel().hasEnoughInStock(item.getStockItem(), wantedQuantity)) {
       throw new VerificationFailedException("Your desired quantity exceeds the amount in stock!");
     }
     if (model.getWarehouseTableModel().validateNameUniqueness(item.getName())) {

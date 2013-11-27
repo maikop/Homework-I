@@ -101,9 +101,4 @@ public class SoldItem implements Cloneable, DisplayableItem {
 	public void setSale(Sale sale) {
 		this.sale = sale;
 	}
-
-	public void increaseQuantity(Integer quantity) {
-		this.quantity += quantity;
-	}
-
 }

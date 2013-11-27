@@ -116,7 +116,8 @@ public class PurchaseInfoTableModel extends SalesSystemTableModel<SoldItem> {
 
 	@Override
 	public void clearRows() {
-		this.activeSale = new Sale();
+		activeSale = new Sale();
+		activeSale.setSoldItems(new HashSet<SoldItem>());
 	}
 
 	@Override

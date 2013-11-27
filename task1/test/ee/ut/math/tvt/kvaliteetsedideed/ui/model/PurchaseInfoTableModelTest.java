@@ -19,7 +19,7 @@ public class PurchaseInfoTableModelTest {
   @Before
   public void setup() throws VerificationFailedException {
     pit = new PurchaseInfoTableModel();
-    si = new StockItem((long) 170, "test", "test", 1.0, 2);
+    si = new StockItem(170L, "test", "test", 1.0, 2);
     s = new SoldItem(si, 1);
     List<SoldItem> list = new ArrayList<SoldItem>();
     list.add(s);
@@ -37,8 +37,6 @@ public class PurchaseInfoTableModelTest {
 
   @Test
   public void testGetItemByStockItemId() {
-
-    assertEquals(pit.getItemByStockItemId((long) 170), s);
-
+    assertEquals(pit.getItemByStockItemId(170L), s);
   }
 }

@@ -15,7 +15,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -32,17 +31,15 @@ public class PurchaseTab implements SalesSystemTab {
 	private final SalesDomainController domainController;
 	private final SalesSystemModel model;
 
-	private final JFrame parent;
 	private PurchaseItemPanel purchasePane;
 	private JPanel panel;
 	private JButton newPurchase;
 	private JButton submitPurchase;
 	private JButton cancelPurchase;
 
-	public PurchaseTab(SalesDomainController controller, SalesSystemModel model, JFrame parent) {
+	public PurchaseTab(SalesDomainController controller, SalesSystemModel model) {
 		this.domainController = controller;
 		this.model = model;
-		this.parent = parent;
 	}
 
 	/**

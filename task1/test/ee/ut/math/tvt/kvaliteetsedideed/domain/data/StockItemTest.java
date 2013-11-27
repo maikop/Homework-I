@@ -2,6 +2,7 @@ package ee.ut.math.tvt.kvaliteetsedideed.domain.data;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +12,7 @@ public class StockItemTest {
 
   @Before
   public void setUp() {
-    item = new StockItem((long) 100, "test", "test", 100, 100);
+    item = new StockItem(100L, "test", "test", 100, 100);
   }
 
   @Test
@@ -22,6 +23,7 @@ public class StockItemTest {
     assertEquals(item.getDescription(), sc.getDescription());
     assertEquals(item.getPrice(), sc.getPrice(), 0.0001);
     assertEquals(item.getQuantity(), sc.getQuantity());
+    Assert.assertNotSame(item, sc);
   }
 
   @Test

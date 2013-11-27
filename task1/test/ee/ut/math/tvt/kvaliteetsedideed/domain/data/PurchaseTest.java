@@ -15,7 +15,7 @@ public class PurchaseTest {
 
   @Before
   public void setUp() {
-    item = new StockItem((long) 100, "test", "test", 100, 100);
+    item = new StockItem(100L, "test", "test", 100, 100);
     s1 = new SoldItem(item, 0);
     s2 = new SoldItem(item, 1);
     s3 = new SoldItem(item, 2);

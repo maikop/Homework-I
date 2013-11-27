@@ -47,7 +47,7 @@ public class SalesSystemUI extends JFrame {
 		domainController.setModel(model);
 
 		tabs = new ArrayList<>();
-		tabs.add(new PurchaseTab(domainController, model, this));
+		tabs.add(new PurchaseTab(domainController, model));
 		tabs.add(new StockTab(model, domainController));
 		tabs.add(new HistoryTab(model, domainController));
 		tabs.add(new ClientTab(model));

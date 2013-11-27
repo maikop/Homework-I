@@ -97,10 +97,6 @@ public class SalesDomainControllerImpl implements SalesDomainController {
 		this.model = model;
 	}
 
-	public Sale getSale(Long id) {
-		return (Sale) session.get(Sale.class, id);
-	}
-
 	@Override
 	public void endSession() {
 		HibernateUtil.closeSession();
