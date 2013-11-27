@@ -15,7 +15,7 @@ public class SoldItemTest {
 
   @Before
   public void setUp() {
-    item = new StockItem((long) 100, "test", "test", 100);
+    item = new StockItem((long) 100, "test", "test", 100, 100);
   }
 
   @Test
