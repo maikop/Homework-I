@@ -82,7 +82,7 @@ public class HistoryTab implements SalesSystemTab {
 	private Component drawHistoryDetailsTable() {
 
 		// Create the table
-		historyDetailsTableModel = new PurchaseInfoTableModel(controller);
+		historyDetailsTableModel = new PurchaseInfoTableModel(model);
 		JTable table = new JTable(historyDetailsTableModel);
 		table.getTableHeader().setReorderingAllowed(false);
 

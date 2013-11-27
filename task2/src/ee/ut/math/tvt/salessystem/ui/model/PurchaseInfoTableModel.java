@@ -1,11 +1,11 @@
 package ee.ut.math.tvt.salessystem.ui.model;
 
-import ee.ut.math.tvt.salessystem.domain.controller.SalesDomainController;
 import ee.ut.math.tvt.salessystem.domain.data.Sale;
 import ee.ut.math.tvt.salessystem.domain.data.SoldItem;
 import ee.ut.math.tvt.salessystem.domain.data.StockItem;
 import ee.ut.math.tvt.salessystem.domain.exception.SalesSystemException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import org.apache.log4j.Logger;
 
@@ -16,11 +16,13 @@ public class PurchaseInfoTableModel extends SalesSystemTableModel<SoldItem> {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(PurchaseInfoTableModel.class);
-	private Sale sale = new Sale();
+	private Sale activeSale = new Sale();
 
-	public PurchaseInfoTableModel(SalesDomainController controller) {
+	private final SalesSystemModel model;
+
+	public PurchaseInfoTableModel(SalesSystemModel model) {
 		super(new String[] { "Id", "Name", "Price", "Quantity", "Sum" });
-		this.controller = controller;
+		this.model = model;
 	}
 
 	@Override
@@ -65,14 +67,31 @@ public class PurchaseInfoTableModel extends SalesSystemTableModel<SoldItem> {
 	 */
 	public void addItem(final SoldItem soldItem) throws SalesSystemException {
 		StockItem stockItem = soldItem.getStockItem();
-		SoldItem existingItem = controller.verifyEnoughInStock(stockItem, soldItem.getQuantity());
-		if (existingItem != null) {
-			existingItem.increaseQuantity(soldItem.getQuantity());
-			log.debug("Found existing item " + soldItem.getName() + " increased quantity by "
-			    + soldItem.getQuantity());
+
+		Integer wantedQuantity = soldItem.getQuantity();
+		SoldItem existingItem = null;
+		if (activeSale.getSoldItems() == null) {
+			activeSale.setSoldItems(new HashSet<SoldItem>());
+		}
+		for (final SoldItem row : activeSale.getSoldItems()) {
+			if (row.getStockItem().getId().equals(stockItem.getId())) {
+				wantedQuantity += row.getQuantity();
+				existingItem = row;
+				break;
+			}
+		}
+
+		if (model.getWarehouseTableModel().hasEnoughInStock(stockItem, wantedQuantity)) {
+			if (existingItem != null) {
+				existingItem.setQuantity(wantedQuantity);
+				log.debug("Found existing item " + soldItem.getName() + " increased quantity by "
+				    + soldItem.getQuantity());
+			} else {
+				activeSale.addSoldItem(soldItem);
+				log.debug("Added " + soldItem.getName() + " quantity of " + soldItem.getQuantity());
+			}
 		} else {
-			controller.addSoldItemToActiveSale(soldItem);
-			log.debug("Added " + soldItem.getName() + " quantity of " + soldItem.getQuantity());
+			throw new SalesSystemException();
 		}
 		refresh();
 	}
@@ -82,28 +101,31 @@ public class PurchaseInfoTableModel extends SalesSystemTableModel<SoldItem> {
 	 * Sale. (Used by the history details table in the HistoryTab).
 	 */
 	public void showSale(Sale sale) {
-		this.sale = sale;
+		this.activeSale = sale;
 		fireTableDataChanged();
 	}
 
 	@Override
 	public List<SoldItem> getRows() {
 		List<SoldItem> rows = new ArrayList<>();
-		if (sale.getSoldItems() != null) {
-			rows.addAll(sale.getSoldItems());
+		if (activeSale.getSoldItems() != null) {
+			rows.addAll(activeSale.getSoldItems());
 		}
 		return rows;
 	}
 
 	@Override
 	public void clearRows() {
-		this.sale = new Sale();
+		this.activeSale = new Sale();
 	}
 
 	@Override
 	public void refresh() {
-		this.sale = controller.getActiveSale();
 		fireTableDataChanged();
+	}
+
+	public Sale getSale() {
+		return activeSale;
 	}
 
 }

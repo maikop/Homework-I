@@ -155,14 +155,14 @@ public class PurchaseTab implements SalesSystemTab {
 
 	/** Event handler for the <code>submit purchase</code> event. */
 	protected void startPayingPurchase() {
-		double price = model.getActiveSale().getSum();
+		double price = model.getCurrentPurchaseTableModel().getSale().getSum();
 		PayingWindow.show(price, this);
 	}
 
 	public void endPurchaseAfterPaying() {
 		log.info("Sale complete");
-		log.debug("Contents of the current basket:\n" + model.getActiveSale());
-		domainController.registerSale(model.getActiveSale());
+		log.debug("Contents of the current basket:\n" + model.getCurrentPurchaseTableModel().getSale());
+		domainController.registerSale(model.getCurrentPurchaseTableModel().getSale());
 		endSale();
 		model.getCurrentPurchaseTableModel().clear();
 
@@ -266,8 +266,7 @@ public class PurchaseTab implements SalesSystemTab {
 
 	@Override
 	public void refreshContents() {
-		// TODO Auto-generated method stub
-
+		// No need
 	}
 
 }
