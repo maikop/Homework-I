@@ -8,10 +8,7 @@ import org.junit.Test;
 public class SoldItemTest {
 
   private StockItem item;
-
-  /**
-   * Methods with @Before annotations will be invoked before each test is run.
-   */
+  private Purchase p;
 
   @Before
   public void setUp() {
@@ -30,5 +27,12 @@ public class SoldItemTest {
     SoldItem s = new SoldItem(item, 0);
 
     assertEquals(s.getSum(), 0, 0.001);
+  }
+
+  @Test
+  public void testGetPurchase() {
+    SoldItem s = new SoldItem(item, 0);
+
+    assertEquals(s.getPurchase(), p);
   }
 }
